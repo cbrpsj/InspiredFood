@@ -1,6 +1,5 @@
 package pc.inspiredfood
 
-import android.app.Activity
 import android.app.ListActivity
 import android.os.Bundle
 import android.view.View
@@ -12,6 +11,7 @@ import org.jetbrains.anko.toast
 
 class RecipeListActivity : ListActivity() {
 
+    var recipes: List<Recipe> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -19,37 +19,35 @@ class RecipeListActivity : ListActivity() {
         setContentView(R.layout.activity_recipe_list)
 
         mainButtons.check(all.id)
+
+        RecipeDBHelper.instance.use {
+
+            // Create a row parser (parse all fields, and return two of them as a Pair)
+            val parser = rowParser {
+
+                id: Int,
+                name: String,
+                category: Int,
+                instructions: String,
+                popularity: Int,
+                noOfPeople: Int -> Recipe(id, name, category, instructions, popularity, noOfPeople)
+            }
+
+            // Query db for all recipes, orderBy recipeName and parse the result to a list
+            recipes = select(C.RecipesTable.tableName)
+                    .orderBy(C.RecipesTable.recipeName)
+                    .parseList(parser)
+
+        }
     }
 
 
     override fun onResume() {
 
         super.onResume()
-
-        RecipeDBHelper.instance.use {
-
-            //val cursor = rawQuery("select * from ${C.RecipesTable.tableName}", null)
-            //listAdapter = RecipeCursorAdapter(this@RecipeListActivity, cursor, 0)
-
-            // Create a row parser (parse all fields, and return two of them as a Pair)
-            val parser = rowParser {
-
-                id: Int,
-                recipeName: String,
-                category: Int,
-                instr: String,
-                popul: Int,
-                noOfPeople: Int -> Pair(id, recipeName)
-            }
-
-            // Query db for all recipes, orderBy recipeName and parse the result to a list
-            val recipes = select(C.RecipesTable.tableName)
-                    .orderBy(C.RecipesTable.recipeName)
-                    .parseList(parser)
-
-            listAdapter = RecipeAdapter(this@RecipeListActivity, recipes)
-        }
+        filterRecipes()
     }
+
 
     override fun onListItemClick(listView: ListView?, view: View, position: Int, id: Long) {
 
@@ -59,18 +57,27 @@ class RecipeListActivity : ListActivity() {
             toast("RecipeID: $recipeId")
     }
 
+
     fun mainButtonClicked(view: View) {
 
-        var str = ""
+        filterRecipes()
+        listView.invalidateViews()
+    }
 
-        when(view.id) {
-            starters.id -> str = "Starters"
-            mains.id -> str = "Mains"
-            desserts.id -> str = "Desserts"
-            favourites.id -> str = "Favourites"
-            all.id -> str = "All"
+
+    fun filterRecipes() {
+
+        var buttonChecked = mainButtons.checkedRadioButtonId
+        var tempList: List<Recipe>
+
+        when(buttonChecked) {
+            starters.id -> tempList = recipes.filter { it.category == 1 }
+            mains.id -> tempList = recipes.filter { it.category == 2 }
+            desserts.id -> tempList = recipes.filter { it.category == 3 }
+            favourites.id -> tempList = recipes.sortedBy { it.popularity }
+            else -> tempList = recipes.sortedBy { it.name }
         }
 
-        toast(str)
+        listAdapter = RecipeAdapter(this@RecipeListActivity, tempList)
     }
 }

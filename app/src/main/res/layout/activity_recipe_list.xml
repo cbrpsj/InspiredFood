@@ -14,13 +14,15 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingBottom="20dp"
-        android:paddingTop="20dp">
+        android:paddingTop="20dp"
+        android:background="?android:attr/dividerHorizontal">
 
         <RadioButton
             android:id="@+id/starters"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:buttonTint="#000000"
             android:text="Starters"
             android:onClick="mainButtonClicked" />
 
@@ -29,6 +31,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:buttonTint="#000000"
             android:text="Mains"
             android:onClick="mainButtonClicked" />
 
@@ -37,6 +40,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:buttonTint="#000000"
             android:text="Desserts"
             android:onClick="mainButtonClicked" />
 
@@ -45,6 +49,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:buttonTint="#000000"
             android:text="Favourites"
             android:onClick="mainButtonClicked" />
 
@@ -53,6 +58,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:buttonTint="#000000"
             android:text="All"
             android:onClick="mainButtonClicked" />
 
