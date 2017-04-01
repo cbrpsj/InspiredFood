@@ -77,7 +77,7 @@ class RecipeListActivity : ListActivity() {
             starters.id -> tempList = recipes.filter { it.category == 1 }
             mains.id -> tempList = recipes.filter { it.category == 2 }
             desserts.id -> tempList = recipes.filter { it.category == 3 }
-            favourites.id -> tempList = recipes.sortedBy { it.popularity }
+            favourites.id -> tempList = recipes.sortedByDescending { it.popularity }
             else -> tempList = recipes.sortedBy { it.name }
         }
 

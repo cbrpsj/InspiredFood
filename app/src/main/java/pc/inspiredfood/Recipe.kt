@@ -7,8 +7,6 @@ data class Recipe(val id: Int, var name: String, var category: Int, var instruct
 
     fun updatePopularity() {
 
-        //popularity++
-
         RecipeDBHelper.instance.use {
 
             update(C.RecipesTable.tableName, C.RecipesTable.popularity to ++popularity)
