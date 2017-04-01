@@ -49,12 +49,15 @@ class RecipeListActivity : ListActivity() {
     }
 
 
-    override fun onListItemClick(listView: ListView?, view: View, position: Int, id: Long) {
+    override fun onListItemClick(listView: ListView, view: View, position: Int, id: Long) {
 
         val recipeId = view.tag
 
         if (recipeId is Int)
             toast("RecipeID: $recipeId")
+
+        recipes.find { it.id == recipeId }?.updatePopularity()
+        filterRecipes()
     }
 
 
