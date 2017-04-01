@@ -44,6 +44,7 @@ class RecipeCursorAdapter(context: Context, cursor: Cursor, flags: Int) : Cursor
                 .inflate(R.layout.item_recipe, parent, false)
     }
 
+    // Set tag and text content of visual item
     override fun bindView(view: View, context: Context, cursor: Cursor) {
 
         view.tag = cursor.getInt(cursor.getColumnIndex(C.RecipesTable.id))
