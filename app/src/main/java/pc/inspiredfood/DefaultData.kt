@@ -109,4 +109,245 @@ fun defaultData(db: SQLiteDatabase) {
             C.RecipesTable.popularity to 11,
             C.RecipesTable.numberOfPeople to 2
     )
+
+    tableName = C.UnitsTable.tableName
+    columnName = C.UnitsTable.unitName
+
+    db.insert(tableName, columnName to "dl")
+    db.insert(tableName, columnName to "l")
+    db.insert(tableName, columnName to "g")
+    db.insert(tableName, columnName to "kg")
+    db.insert(tableName, columnName to "stk")
+    db.insert(tableName, columnName to "tskf")
+    db.insert(tableName, columnName to "spskf")
+
+    tableName = C.IngredientsTable.tableName
+    columnName = C.IngredientsTable.ingredientName
+
+    db.insert(tableName, columnName to "Mel")
+    db.insert(tableName, columnName to "Sukker")
+    db.insert(tableName, columnName to "Æg")
+    db.insert(tableName, columnName to "Smør")
+    db.insert(tableName, columnName to "Bagepulver")
+    db.insert(tableName, columnName to "Mørbradkød")
+    db.insert(tableName, columnName to "Bacon")
+    db.insert(tableName, columnName to "Flormelis")
+    db.insert(tableName, columnName to "Mælk")
+    db.insert(tableName, columnName to "Vand")
+    db.insert(tableName, columnName to "Kartofler")
+    db.insert(tableName, columnName to "Salt")
+
+    tableName = C.IngredientsInRecipesTable.tableName
+
+    db.insert(tableName,
+            C.IngredientsInRecipesTable.recipeId to 1,
+            C.IngredientsInRecipesTable.ingredientId to 1,
+            C.IngredientsInRecipesTable.unitId to 1,
+            C.IngredientsInRecipesTable.amount to 200
+    )
+
+    db.insert(tableName,
+            C.IngredientsInRecipesTable.recipeId to 1,
+            C.IngredientsInRecipesTable.ingredientId to 2,
+            C.IngredientsInRecipesTable.unitId to 4,
+            C.IngredientsInRecipesTable.amount to 1
+    )
+
+    db.insert(tableName,
+            C.IngredientsInRecipesTable.recipeId to 1,
+            C.IngredientsInRecipesTable.ingredientId to 10,
+            C.IngredientsInRecipesTable.unitId to 2,
+            C.IngredientsInRecipesTable.amount to 1
+    )
+
+    db.insert(tableName,
+            C.IngredientsInRecipesTable.recipeId to 1,
+            C.IngredientsInRecipesTable.ingredientId to 6,
+            C.IngredientsInRecipesTable.unitId to 6,
+            C.IngredientsInRecipesTable.amount to 3
+    )
+
+    db.insert(tableName,
+            C.IngredientsInRecipesTable.recipeId to 1,
+            C.IngredientsInRecipesTable.ingredientId to 4,
+            C.IngredientsInRecipesTable.unitId to 3,
+            C.IngredientsInRecipesTable.amount to 100
+    )
+
+
+    db.insert(tableName,
+            C.IngredientsInRecipesTable.recipeId to 2,
+            C.IngredientsInRecipesTable.ingredientId to 7,
+            C.IngredientsInRecipesTable.unitId to 1,
+            C.IngredientsInRecipesTable.amount to 200
+    )
+
+    db.insert(tableName,
+            C.IngredientsInRecipesTable.recipeId to 2,
+            C.IngredientsInRecipesTable.ingredientId to 6,
+            C.IngredientsInRecipesTable.unitId to 4,
+            C.IngredientsInRecipesTable.amount to 1
+    )
+
+    db.insert(tableName,
+            C.IngredientsInRecipesTable.recipeId to 2,
+            C.IngredientsInRecipesTable.ingredientId to 5,
+            C.IngredientsInRecipesTable.unitId to 2,
+            C.IngredientsInRecipesTable.amount to 1
+    )
+
+    db.insert(tableName,
+            C.IngredientsInRecipesTable.recipeId to 2,
+            C.IngredientsInRecipesTable.ingredientId to 4,
+            C.IngredientsInRecipesTable.unitId to 6,
+            C.IngredientsInRecipesTable.amount to 3
+    )
+
+    db.insert(tableName,
+            C.IngredientsInRecipesTable.recipeId to 2,
+            C.IngredientsInRecipesTable.ingredientId to 3,
+            C.IngredientsInRecipesTable.unitId to 3,
+            C.IngredientsInRecipesTable.amount to 100
+    )
+
+    db.insert(tableName,
+            C.IngredientsInRecipesTable.recipeId to 3,
+            C.IngredientsInRecipesTable.ingredientId to 1,
+            C.IngredientsInRecipesTable.unitId to 1,
+            C.IngredientsInRecipesTable.amount to 200
+    )
+
+    db.insert(tableName,
+            C.IngredientsInRecipesTable.recipeId to 3,
+            C.IngredientsInRecipesTable.ingredientId to 2,
+            C.IngredientsInRecipesTable.unitId to 4,
+            C.IngredientsInRecipesTable.amount to 1
+    )
+
+    db.insert(tableName,
+            C.IngredientsInRecipesTable.recipeId to 4,
+            C.IngredientsInRecipesTable.ingredientId to 10,
+            C.IngredientsInRecipesTable.unitId to 2,
+            C.IngredientsInRecipesTable.amount to 1
+    )
+
+    db.insert(tableName,
+            C.IngredientsInRecipesTable.recipeId to 4,
+            C.IngredientsInRecipesTable.ingredientId to 6,
+            C.IngredientsInRecipesTable.unitId to 6,
+            C.IngredientsInRecipesTable.amount to 3
+    )
+
+    db.insert(tableName,
+            C.IngredientsInRecipesTable.recipeId to 4,
+            C.IngredientsInRecipesTable.ingredientId to 4,
+            C.IngredientsInRecipesTable.unitId to 3,
+            C.IngredientsInRecipesTable.amount to 100
+    )
+
+    db.insert(tableName,
+            C.IngredientsInRecipesTable.recipeId to 5,
+            C.IngredientsInRecipesTable.ingredientId to 1,
+            C.IngredientsInRecipesTable.unitId to 1,
+            C.IngredientsInRecipesTable.amount to 200
+    )
+
+    db.insert(tableName,
+            C.IngredientsInRecipesTable.recipeId to 5,
+            C.IngredientsInRecipesTable.ingredientId to 2,
+            C.IngredientsInRecipesTable.unitId to 4,
+            C.IngredientsInRecipesTable.amount to 1
+    )
+
+    db.insert(tableName,
+            C.IngredientsInRecipesTable.recipeId to 6,
+            C.IngredientsInRecipesTable.ingredientId to 10,
+            C.IngredientsInRecipesTable.unitId to 2,
+            C.IngredientsInRecipesTable.amount to 1
+    )
+
+    db.insert(tableName,
+            C.IngredientsInRecipesTable.recipeId to 6,
+            C.IngredientsInRecipesTable.ingredientId to 6,
+            C.IngredientsInRecipesTable.unitId to 6,
+            C.IngredientsInRecipesTable.amount to 3
+    )
+
+    db.insert(tableName,
+            C.IngredientsInRecipesTable.recipeId to 7,
+            C.IngredientsInRecipesTable.ingredientId to 4,
+            C.IngredientsInRecipesTable.unitId to 3,
+            C.IngredientsInRecipesTable.amount to 100
+    )
+
+
+    db.insert(tableName,
+            C.IngredientsInRecipesTable.recipeId to 7,
+            C.IngredientsInRecipesTable.ingredientId to 7,
+            C.IngredientsInRecipesTable.unitId to 1,
+            C.IngredientsInRecipesTable.amount to 200
+    )
+
+    db.insert(tableName,
+            C.IngredientsInRecipesTable.recipeId to 8,
+            C.IngredientsInRecipesTable.ingredientId to 6,
+            C.IngredientsInRecipesTable.unitId to 4,
+            C.IngredientsInRecipesTable.amount to 1
+    )
+
+    db.insert(tableName,
+            C.IngredientsInRecipesTable.recipeId to 8,
+            C.IngredientsInRecipesTable.ingredientId to 5,
+            C.IngredientsInRecipesTable.unitId to 2,
+            C.IngredientsInRecipesTable.amount to 1
+    )
+
+    db.insert(tableName,
+            C.IngredientsInRecipesTable.recipeId to 9,
+            C.IngredientsInRecipesTable.ingredientId to 4,
+            C.IngredientsInRecipesTable.unitId to 6,
+            C.IngredientsInRecipesTable.amount to 3
+    )
+
+    db.insert(tableName,
+            C.IngredientsInRecipesTable.recipeId to 9,
+            C.IngredientsInRecipesTable.ingredientId to 3,
+            C.IngredientsInRecipesTable.unitId to 3,
+            C.IngredientsInRecipesTable.amount to 100
+    )
+
+    db.insert(tableName,
+            C.IngredientsInRecipesTable.recipeId to 10,
+            C.IngredientsInRecipesTable.ingredientId to 1,
+            C.IngredientsInRecipesTable.unitId to 1,
+            C.IngredientsInRecipesTable.amount to 200
+    )
+
+    db.insert(tableName,
+            C.IngredientsInRecipesTable.recipeId to 10,
+            C.IngredientsInRecipesTable.ingredientId to 2,
+            C.IngredientsInRecipesTable.unitId to 4,
+            C.IngredientsInRecipesTable.amount to 1
+    )
+
+    db.insert(tableName,
+            C.IngredientsInRecipesTable.recipeId to 11,
+            C.IngredientsInRecipesTable.ingredientId to 10,
+            C.IngredientsInRecipesTable.unitId to 2,
+            C.IngredientsInRecipesTable.amount to 1
+    )
+
+    db.insert(tableName,
+            C.IngredientsInRecipesTable.recipeId to 11,
+            C.IngredientsInRecipesTable.ingredientId to 6,
+            C.IngredientsInRecipesTable.unitId to 6,
+            C.IngredientsInRecipesTable.amount to 3
+    )
+
+    db.insert(tableName,
+            C.IngredientsInRecipesTable.recipeId to 12,
+            C.IngredientsInRecipesTable.ingredientId to 4,
+            C.IngredientsInRecipesTable.unitId to 3,
+            C.IngredientsInRecipesTable.amount to 100
+    )
 }

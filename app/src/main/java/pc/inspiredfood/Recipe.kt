@@ -5,6 +5,7 @@ import org.jetbrains.anko.db.update
 data class Recipe(val id: Int, var name: String, var category: Int, var instructions: String,
                   var popularity: Int, var noOfPeople: Int) {
 
+    // Increase popularity by one and update recipe in the database
     fun updatePopularity() {
 
         RecipeDBHelper.instance.use {
