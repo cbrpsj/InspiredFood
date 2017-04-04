@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.ListView
 import kotlinx.android.synthetic.main.activity_recipe_list.*
 import org.jetbrains.anko.db.*
+import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.toast
 
 
@@ -24,20 +25,17 @@ class RecipeListActivity : ListActivity() {
 
             // Create a row parser (parse all fields, and return two of them as a Pair)
             val parser = rowParser {
-
                 id: Int,
                 name: String,
                 category: Int,
-                instructions: String,
-                popularity: Int,
-                noOfPeople: Int -> Recipe(id, name, category, instructions, popularity, noOfPeople)
+                popularity: Int -> Recipe(id, name, category, popularity)
             }
 
             // Query db for all recipes, orderBy recipeName and parse the result to a list
-            recipes = select(C.RecipesTable.tableName)
+            recipes = select(C.RecipesTable.tableName, C.RecipesTable.id, C.RecipesTable.recipeName,
+                    C.RecipesTable.category, C.RecipesTable.popularity)
                     .orderBy(C.RecipesTable.recipeName)
                     .parseList(parser)
-
         }
     }
 
@@ -51,13 +49,12 @@ class RecipeListActivity : ListActivity() {
 
     override fun onListItemClick(listView: ListView, view: View, position: Int, id: Long) {
 
-        val recipeId = view.tag
+        val id = view.tag
 
-        if (recipeId is Int)
-            toast("RecipeID: $recipeId")
+        toast("RecipeID: $id")
 
-        recipes.find { it.id == recipeId }?.updatePopularity()
-        filterRecipes()
+        recipes.find { it.id == id }?.updatePopularity()
+        startActivity(intentFor<RecipeActivity>(C.recipeId to id))
     }
 
 

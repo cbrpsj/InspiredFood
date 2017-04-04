@@ -2,6 +2,8 @@ package pc.inspiredfood
 
 object C {
 
+    val recipeId = "recipeId"
+
     val dbName = "Recipes"
 
     object RecipesTable {
