@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">InspiredFood</string>
+    <string name="add">+</string>
+    <string name="starters">Starters</string>
+    <string name="mains">Mains</string>
+    <string name="desserts">Desserts</string>
+    <string name="favourites">Favourites</string>
+    <string name="all">All</string>
+    <string name="recipe_info_for">for</string>
+    <string name="recipe_info_person">person</string>
+    <string name="recipe_info_persons">persons</string>
+    <string name="instructions">Instructions</string>
+    <string name="ingredients">Ingredients</string>
+
 </resources>

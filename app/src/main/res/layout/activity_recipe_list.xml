@@ -8,6 +8,26 @@
     android:orientation="vertical"
     tools:context="pc.inspiredfood.RecipeListActivity">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:text="InspiredFood" />
+
+        <Button
+            android:id="@+id/button_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:text="+"/>
+    </LinearLayout>
+
     <RadioGroup
         android:id="@+id/mainButtons"
         android:layout_width="match_parent"
@@ -23,7 +43,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:buttonTint="#000000"
-            android:text="Starters"
+            android:text="@string/starters"
+            android:textSize="12.5dp"
             android:onClick="mainButtonClicked" />
 
         <RadioButton
@@ -32,7 +53,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:buttonTint="#000000"
-            android:text="Mains"
+            android:text="@string/mains"
+            android:textSize="12.5dp"
             android:onClick="mainButtonClicked" />
 
         <RadioButton
@@ -41,7 +63,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:buttonTint="#000000"
-            android:text="Desserts"
+            android:text="@string/desserts"
+            android:textSize="12.5dp"
             android:onClick="mainButtonClicked" />
 
         <RadioButton
@@ -50,7 +73,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:buttonTint="#000000"
-            android:text="Favourites"
+            android:text="@string/favourites"
+            android:textSize="12.5dp"
             android:onClick="mainButtonClicked" />
 
         <RadioButton
@@ -59,7 +83,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:buttonTint="#000000"
-            android:text="All"
+            android:text="@string/all"
+            android:textSize="12.5dp"
             android:onClick="mainButtonClicked" />
 
     </RadioGroup>

@@ -27,7 +27,7 @@ class RecipeAdapter(context: Context, val recipes: List<Recipe>):
 
         // Set tag to id (first var in Pair), and display the recipeName in view (second var in Pair)
         view.tag = recipe.id
-        view.textRecipeMain.setText(recipe.name)
+        view.text_recipe_main.setText(recipe.name)
 
         // return the view
         return view

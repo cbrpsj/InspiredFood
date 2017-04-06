@@ -9,13 +9,54 @@
     tools:context="pc.inspiredfood.RecipeActivity">
 
     <TextView
-        android:id="@+id/recipename"
+        android:id="@+id/recipe_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingBottom="20dp"
         android:paddingTop="20dp"
         android:layout_gravity="center"
         android:textColor="#707070"
-        android:textSize="30dp"
-        android:text="Mørbradgryde" />
+        android:textSize="30dp"/>
+
+    <TextView
+        android:id="@+id/recipe_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dp"
+        android:layout_gravity="center"
+        android:textColor="#707070"
+        android:textSize="15dp"
+        android:textStyle="italic"/>
+
+    <TextView
+        android:id="@+id/recipe_ingredients_headline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="20dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:textColor="#707070"
+        android:textSize="20dp"
+        android:text="@string/ingredients"/>
+
+    <TextView
+        android:id="@+id/recipe_instructions_headline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="20dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:textColor="#707070"
+        android:textSize="20dp"
+        android:text="@string/instructions"/>
+
+    <TextView
+        android:id="@+id/recipe_instructions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:textColor="#707070"
+        android:textSize="15dp"/>
+
 </LinearLayout>

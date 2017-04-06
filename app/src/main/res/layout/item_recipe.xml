@@ -9,13 +9,12 @@
     android:paddingRight="20dp">
 
     <TextView
-        android:id="@+id/textRecipeMain"
+        android:id="@+id/text_recipe_main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="20dp"
         android:paddingBottom="20dp"
         android:textColor="#707070"
-        android:textSize="20dp"
-        android:text="TextView" />
+        android:textSize="20dp"/>
 
 </LinearLayout>

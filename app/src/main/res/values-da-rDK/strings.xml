@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="starters">Forretter</string>
+    <string name="mains">Hovedretter</string>
+    <string name="desserts">Desserter</string>
+    <string name="favourites">Favoritter</string>
+    <string name="all">Alle</string>
+</resources>

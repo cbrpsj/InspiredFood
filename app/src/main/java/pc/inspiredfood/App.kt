@@ -8,7 +8,10 @@ class App : Application() {
 
         lateinit var instance: App
             private set
+
+        var updateRecipeList = true
     }
+
 
     override fun onCreate() {
 

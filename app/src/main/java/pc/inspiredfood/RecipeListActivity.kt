@@ -8,6 +8,7 @@ import kotlinx.android.synthetic.main.activity_recipe_list.*
 import org.jetbrains.anko.db.*
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.toast
+import pc.inspiredfood.App.Companion.updateRecipeList
 
 
 class RecipeListActivity : ListActivity() {
@@ -19,30 +20,37 @@ class RecipeListActivity : ListActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_recipe_list)
 
+        updateRecipeList = true
         mainButtons.check(all.id)
-
-        RecipeDBHelper.instance.use {
-
-            // Create a row parser (parse all fields, and return two of them as a Pair)
-            val parser = rowParser {
-                id: Int,
-                name: String,
-                category: Int,
-                popularity: Int -> Recipe(id, name, category, popularity)
-            }
-
-            // Query db for all recipes, orderBy recipeName and parse the result to a list
-            recipes = select(C.RecipesTable.tableName, C.RecipesTable.id, C.RecipesTable.recipeName,
-                    C.RecipesTable.category, C.RecipesTable.popularity)
-                    .orderBy(C.RecipesTable.recipeName)
-                    .parseList(parser)
-        }
     }
 
 
     override fun onResume() {
 
         super.onResume()
+
+        if (updateRecipeList) {
+
+            RecipeDBHelper.instance.use {
+
+                // Create a row parser (parse all fields, and return two of them as a Pair)
+                val parser = rowParser {
+                    id: Int,
+                    name: String,
+                    category: Int,
+                    popularity: Int -> Recipe(id, name, category, popularity)
+                }
+
+                // Query db for all recipes, orderBy recipeName and parse the result to a list
+                recipes = select(C.RecipesTable.tableName, C.RecipesTable.id, C.RecipesTable.recipeName,
+                        C.RecipesTable.category, C.RecipesTable.popularity)
+                        .orderBy(C.RecipesTable.recipeName)
+                        .parseList(parser)
+            }
+
+            updateRecipeList = false
+        }
+
         filterRecipes()
     }
 

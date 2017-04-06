@@ -33,7 +33,7 @@ fun defaultData(db: SQLiteDatabase) {
     db.insert(tableName,
             C.RecipesTable.recipeName to "Is",
             C.RecipesTable.category to 3,
-            C.RecipesTable.instructions to "Sæt i fryser. Tag den ud.",
+            C.RecipesTable.instructions to "Sæt i fryser. \nTag den ud.",
             C.RecipesTable.popularity to 10,
             C.RecipesTable.numberOfPeople to 1
     )
@@ -57,7 +57,7 @@ fun defaultData(db: SQLiteDatabase) {
     db.insert(tableName,
             C.RecipesTable.recipeName to "Mørbradgryde",
             C.RecipesTable.category to 2,
-            C.RecipesTable.instructions to "Put i gryden og rør rundt",
+            C.RecipesTable.instructions to "Put i gryden og rør rundt.",
             C.RecipesTable.popularity to 8,
             C.RecipesTable.numberOfPeople to 3
     )
@@ -73,7 +73,7 @@ fun defaultData(db: SQLiteDatabase) {
     db.insert(tableName,
             C.RecipesTable.recipeName to "Nachos",
             C.RecipesTable.category to 1,
-            C.RecipesTable.instructions to "Noget med kylling",
+            C.RecipesTable.instructions to "Noget med kylling.",
             C.RecipesTable.popularity to 5,
             C.RecipesTable.numberOfPeople to 4
     )
@@ -81,7 +81,7 @@ fun defaultData(db: SQLiteDatabase) {
     db.insert(tableName,
             C.RecipesTable.recipeName to "Pastaret",
             C.RecipesTable.category to 2,
-            C.RecipesTable.instructions to "Koges godt og grundigt",
+            C.RecipesTable.instructions to "Koges godt og grundigt.",
             C.RecipesTable.popularity to 9,
             C.RecipesTable.numberOfPeople to 2
     )
