@@ -9,7 +9,6 @@
     <string name="recipe_info_for">for</string>
     <string name="recipe_info_person">person</string>
     <string name="recipe_info_persons">persons</string>
-    <string name="instructions">Instructions</string>
     <string name="ingredients">Ingredients</string>
-
+    <string name="instructions">Preparation</string>
 </resources>
