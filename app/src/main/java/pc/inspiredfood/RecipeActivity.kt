@@ -2,12 +2,11 @@ package pc.inspiredfood
 
 import android.app.Activity
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.Gravity
 import android.widget.TableRow
 import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_recipe.*
-import org.jetbrains.anko.db.MapRowParser
-import org.jetbrains.anko.db.RowParser
 import org.jetbrains.anko.db.rowParser
 import org.jetbrains.anko.db.select
 
@@ -29,6 +28,7 @@ class RecipeActivity : Activity() {
     }
 
 
+    // Get details about a specific recipe
     fun getRecipeDetails(id: Int) {
 
         var recipeName: String
@@ -40,8 +40,7 @@ class RecipeActivity : Activity() {
         RecipeDBHelper.instance.use {
 
             // Query db for all recipes, orderBy recipeName and parse result to a list
-            val recipe = select(
-                    C.RecipesTable.tableName+","+C.CategoriesTable.tableName,
+            select( C.RecipesTable.tableName+","+C.CategoriesTable.tableName,
                     C.RecipesTable.recipeName, C.CategoriesTable.categoryName, C.RecipesTable.preparation, C.RecipesTable.numberOfPeople)
                     .where("$id = " +
                             "${C.RecipesTable.tableName}.${C.RecipesTable.id} and " +
@@ -62,6 +61,7 @@ class RecipeActivity : Activity() {
     }
 
 
+    // Get category in the correct language
     fun translateCategory(categoryName: String): String =
             when(categoryName){
                 "Starter" -> getString(R.string.starter)
@@ -79,8 +79,8 @@ class RecipeActivity : Activity() {
 
             // Query db for all ingredients in a recipe and parse result to list of Triples
             ingredientsInRecipe = select(
-                    C.IngredientsInRecipesTable.tableName+","+C.IngredientsTable.tableName+","+
-                            C.UnitsTable.tableName, C.IngredientsTable.ingredientName, C.IngredientsInRecipesTable.amount, C.UnitsTable.unitName)
+                    C.IngredientsInRecipesTable.tableName+","+C.IngredientsTable.tableName+","+ C.UnitsTable.tableName,
+                    C.IngredientsTable.ingredientName, C.IngredientsInRecipesTable.amount, C.UnitsTable.unitName)
                     .where("$id = " +
                             "${C.IngredientsInRecipesTable.tableName}.${C.IngredientsInRecipesTable.recipeId} and " +
                             "${C.IngredientsInRecipesTable.tableName}.${C.IngredientsInRecipesTable.ingredientId} =" +
@@ -105,8 +105,18 @@ class RecipeActivity : Activity() {
 
             // Create table row
             val tableRow = TableRow(this)
-            val lp = TableRow.LayoutParams()
-            lp.weight = 8f
+            val layoutParams = TableRow.LayoutParams()
+            val textTypeValue = TypedValue.COMPLEX_UNIT_SP
+            val textSize = 17f
+
+            // Set padding for table row
+            tableRow.setPadding(20, 10, 25, 10)
+
+            // Set table row border using drawable shape under resource
+            tableRow.background = getDrawable(R.drawable.cell)
+
+            // Set weight (used in ingredient text view). Ensure space between ingredient and amount
+            layoutParams.weight = 1f
 
             // Create text views for table row
             val textViewIngredient = TextView(this)
@@ -118,11 +128,20 @@ class RecipeActivity : Activity() {
             textViewAmount.text = ingredientLine.second.toString()
             textViewUnit.text =ingredientLine.third
 
-            // Set padding, text alignment and weight for text views
-            textViewIngredient.layoutParams = lp
-            textViewIngredient.setPadding(0, 0, 40, 0)
+            // Set text size in text views
+            textViewIngredient.setTextSize(textTypeValue, textSize)
+            textViewAmount.setTextSize(textTypeValue, textSize)
+            textViewUnit.setTextSize(textTypeValue, textSize)
+
+            // Set right padding (adds padding between the 3 text views)
+            textViewIngredient.setPadding(0, 0, 50, 0)
+            textViewAmount.setPadding(5, 0, 50, 0)
+
+            // Apply weight to ingredient text view
+            textViewIngredient.layoutParams = layoutParams
+
+            // Align text in amount text view to the right
             textViewAmount.gravity = Gravity.END
-            textViewUnit.setPadding(50, 0, 10, 0)
 
             // Add text views to table row, and add table row to table layout
             tableRow.addView(textViewIngredient)

@@ -15,59 +15,57 @@
         android:paddingTop="20dp"
         android:layout_gravity="center"
         android:textColor="#000000"
-        android:textSize="30dp"/>
+        android:textSize="30sp"/>
 
     <TextView
         android:id="@+id/recipe_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingTop="10dp"
+        android:paddingTop="5dp"
         android:layout_gravity="center"
         android:textColor="#707070"
-        android:textSize="15dp"
+        android:textSize="15sp"
         android:textStyle="italic"/>
 
     <TextView
         android:id="@+id/recipe_ingredients_headline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingTop="20dp"
+        android:paddingTop="30dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:textColor="#000000"
-        android:textSize="20dp"
+        android:textSize="20sp"
         android:text="@string/ingredients"/>
 
     <TableLayout
         android:id="@+id/ingredients_table"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp">
-        <!--android:stretchColumns="*"-->
-        <!--android:shrinkColumns="*"-->
-
+        android:paddingTop="5dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="10sp">
     </TableLayout>
 
     <TextView
         android:id="@+id/recipe_instructions_headline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingTop="20dp"
+        android:paddingTop="30dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:textColor="#000000"
-        android:textSize="20dp"
+        android:textSize="20sp"
         android:text="@string/preparation"/>
 
     <TextView
         android:id="@+id/recipe_preparation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingTop="10dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
+        android:paddingTop="5dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
         android:textColor="#707070"
-        android:textSize="15dp"/>
+        android:textSize="17sp"/>
 
 </LinearLayout>

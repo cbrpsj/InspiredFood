@@ -8,27 +8,35 @@
     android:orientation="vertical"
     tools:context="pc.inspiredfood.RecipeListActivity">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:background="#e3e9ff">
 
         <TextView
             android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="120dp"
-            android:paddingRight="30dp"
-            android:textSize="30dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:textSize="30sp"
             android:textColor="#000000"
-            android:text="InspiredFood" />
+            android:text="@string/app_name" />
 
         <Button
             android:id="@+id/button_add"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="+"/>
-    </LinearLayout>
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/button_border"
+            android:text="@string/add" />
+
+    </RelativeLayout>
 
     <RadioGroup
         android:id="@+id/mainButtons"
@@ -36,8 +44,8 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingBottom="20dp"
-        android:paddingTop="20dp"
-        android:background="?android:attr/dividerHorizontal">
+        android:paddingTop="10dp"
+        android:background="#e3e9ff">
 
         <RadioButton
             android:id="@+id/starters"
@@ -94,7 +102,6 @@
     <ListView
         android:id="@android:id/list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1" />
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

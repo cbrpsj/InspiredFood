@@ -12,9 +12,9 @@
         android:id="@+id/text_recipe_main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="20dp"
-        android:paddingBottom="20dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
         android:textColor="#707070"
-        android:textSize="20dp"/>
+        android:textSize="20sp"/>
 
 </LinearLayout>
