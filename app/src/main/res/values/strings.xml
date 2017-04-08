@@ -6,9 +6,12 @@
     <string name="desserts">Desserts</string>
     <string name="favourites">Favourites</string>
     <string name="all">All</string>
+    <string name="starter">Starter</string>
+    <string name="main">Main</string>
+    <string name="dessert">Dessert</string>
     <string name="recipe_info_for">for</string>
     <string name="recipe_info_person">person</string>
     <string name="recipe_info_persons">persons</string>
     <string name="ingredients">Ingredients</string>
-    <string name="instructions">Preparation</string>
+    <string name="preparation">Preparation</string>
 </resources>

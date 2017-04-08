@@ -11,7 +11,7 @@ object C {
         val id = "_id"
         val recipeName = "recipe_name"
         val category = "category_id"
-        val instructions = "instructions"
+        val preparation = "preparation"
         val popularity = "popularity"
         val numberOfPeople = "number_of_people"
     }

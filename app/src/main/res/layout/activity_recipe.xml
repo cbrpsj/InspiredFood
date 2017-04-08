@@ -38,6 +38,16 @@
         android:textSize="20dp"
         android:text="@string/ingredients"/>
 
+    <TableLayout
+        android:id="@+id/ingredients_table"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:stretchColumns="*"
+        android:shrinkColumns="*">
+    </TableLayout>
+
     <TextView
         android:id="@+id/recipe_instructions_headline"
         android:layout_width="wrap_content"
@@ -47,7 +57,7 @@
         android:paddingRight="10dp"
         android:textColor="#000000"
         android:textSize="20dp"
-        android:text="@string/instructions"/>
+        android:text="@string/preparation"/>
 
     <TextView
         android:id="@+id/recipe_instructions"

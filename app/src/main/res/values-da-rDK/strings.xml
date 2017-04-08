@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">InspiredFood</string>
-    <string name="add">+</string>
     <string name="starters">Forretter</string>
     <string name="mains">Hovedretter</string>
     <string name="desserts">Desserter</string>
     <string name="favourites">Favoritter</string>
     <string name="all">Alle</string>
+    <string name="starter">Forret</string>
+    <string name="main">Hovedret</string>
+    <string name="dessert">Dessert</string>
     <string name="recipe_info_for">til</string>
     <string name="recipe_info_person">person</string>
     <string name="recipe_info_persons">personer</string>
     <string name="ingredients">Ingredienser</string>
-    <string name="instructions">Tilberedning</string>
+    <string name="preparation">Tilberedning</string>
 </resources>
