@@ -12,18 +12,12 @@ class RecipeActivity : Activity() {
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_recipe)
-
-//        val id = intent.getIntExtra(C.recipeId, -1)
-//
-//        recipename.setText(id.toString())
     }
 
     override fun onResume() {
+
         super.onResume()
-
         val id = intent.getIntExtra(C.recipeId, -1)
-
-        //recipename.setText(id.toString())
         fetchRecipe(id)
     }
 
@@ -56,17 +50,6 @@ class RecipeActivity : Activity() {
 
                         recipe_instructions.setText(instructions)
                     })
-
         }
-
-//                .where("${DB.PersonTable.tableName}.${DB.PersonTable.id} = ${DB.PetTable.owner}")
-
-//        parseSingle(rowParser {
-//              id: Int, firstName: String, lastName: String, email: String ->
-//              editFirstName.setText(firstName)
-//              editLastName.setText(lastName)
-//              editEmail.setText(email)
-//              }
-
     }
 }
