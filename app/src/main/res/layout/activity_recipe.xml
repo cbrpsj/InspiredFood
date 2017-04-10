@@ -5,6 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingStart="10dp"
+    android:paddingEnd="10dp"
     android:orientation="vertical"
     tools:context="pc.inspiredfood.RecipeActivity">
 
@@ -32,8 +34,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingTop="30dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
         android:textColor="#000000"
         android:textSize="20sp"
         android:text="@string/ingredients"/>
@@ -42,9 +42,7 @@
         android:id="@+id/ingredients_table"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="5dp"
-        android:paddingStart="10dp"
-        android:paddingEnd="10sp">
+        android:paddingTop="5dp">
     </TableLayout>
 
     <TextView
@@ -52,20 +50,21 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingTop="30dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
+        android:paddingBottom="5dp"
         android:textColor="#000000"
         android:textSize="20sp"
         android:text="@string/preparation"/>
 
     <TextView
         android:id="@+id/recipe_preparation"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingStart="5dp"
         android:paddingTop="5dp"
-        android:paddingStart="10dp"
-        android:paddingEnd="10dp"
+        android:paddingEnd="7dp"
+        android:paddingBottom="5dp"
         android:textColor="#707070"
-        android:textSize="17sp"/>
+        android:textSize="17sp"
+        android:background="@drawable/cell"/>
 
 </LinearLayout>

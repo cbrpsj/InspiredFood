@@ -61,15 +61,6 @@ class RecipeActivity : Activity() {
     }
 
 
-    // Get category in the correct language
-    fun translateCategory(categoryName: String): String =
-            when(categoryName){
-                "Starter" -> getString(R.string.starter)
-                "Main"    -> getString(R.string.main)
-                else      -> getString(R.string.dessert)
-            }
-
-
     // Get ingredients for a specific recipe
     fun getIngredientsForRecipe(id: Int) {
 
@@ -110,7 +101,7 @@ class RecipeActivity : Activity() {
             val textSize = 17f
 
             // Set padding for table row
-            tableRow.setPadding(20, 10, 25, 10)
+            tableRow.setPadding(dpToPixel(5f), dpToPixel(5f), dpToPixel(7f), dpToPixel(5f))
 
             // Set table row border using drawable shape under resource
             tableRow.background = getDrawable(R.drawable.cell)
@@ -133,9 +124,8 @@ class RecipeActivity : Activity() {
             textViewAmount.setTextSize(textTypeValue, textSize)
             textViewUnit.setTextSize(textTypeValue, textSize)
 
-            // Set right padding (adds padding between the 3 text views)
-            textViewIngredient.setPadding(0, 0, 50, 0)
-            textViewAmount.setPadding(5, 0, 50, 0)
+            // Set padding (adds padding between the 3 text views)
+            textViewAmount.setPadding(dpToPixel(15f), 0, dpToPixel(10f), 0)
 
             // Apply weight to ingredient text view
             textViewIngredient.layoutParams = layoutParams
@@ -150,4 +140,17 @@ class RecipeActivity : Activity() {
             ingredients_table.addView(tableRow)
         }
     }
+
+
+    // Convert DP to Pixel
+    fun dpToPixel(dp: Float) = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.displayMetrics).toInt()
+
+
+    // Get category in the correct language
+    fun translateCategory(categoryName: String): String =
+            when(categoryName){
+                "Starter" -> getString(R.string.starter)
+                "Main"    -> getString(R.string.main)
+                else      -> getString(R.string.dessert)
+            }
 }
