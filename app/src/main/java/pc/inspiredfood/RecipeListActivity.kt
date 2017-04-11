@@ -57,12 +57,10 @@ class RecipeListActivity : ListActivity() {
 
     override fun onListItemClick(listView: ListView, view: View, position: Int, id: Long) {
 
-        val id = view.tag
+        val recipeId = view.tag
 
-        toast("RecipeID: $id")
-
-        recipes.find { it.id == id }?.updatePopularity()
-        startActivity(intentFor<RecipeActivity>(C.recipeId to id))
+        recipes.find { it.id == recipeId }?.updatePopularity()
+        startActivity(intentFor<RecipeActivity>(C.recipeId to recipeId))
     }
 
 

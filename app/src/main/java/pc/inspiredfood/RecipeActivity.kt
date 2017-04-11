@@ -2,15 +2,26 @@ package pc.inspiredfood
 
 import android.app.Activity
 import android.os.Bundle
+import android.text.InputType
 import android.util.TypedValue
 import android.view.Gravity
+import android.widget.LinearLayout
 import android.widget.TableRow
 import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_recipe.*
+import org.jetbrains.anko.applyRecursively
+import org.jetbrains.anko.custom.style
 import org.jetbrains.anko.db.rowParser
 import org.jetbrains.anko.db.select
+import org.jetbrains.anko.inputMethodManager
+import org.jetbrains.anko.onClick
+import org.jetbrains.anko.toast
 
 class RecipeActivity : Activity() {
+
+    var editModeEnabled = false
+    var ingredientsInRecipe = listOf<Triple<String, Double, String>>()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -23,6 +34,10 @@ class RecipeActivity : Activity() {
 
         super.onResume()
         val id = intent.getIntExtra(C.recipeId, -1)
+
+        recipe_name.isFocusable = false
+        button_edit_save.onClick { editSaveRecipe() }
+
         getRecipeDetails(id)
         getIngredientsForRecipe(id)
     }
@@ -30,12 +45,6 @@ class RecipeActivity : Activity() {
 
     // Get details about a specific recipe
     fun getRecipeDetails(id: Int) {
-
-        var recipeName: String
-        var category: String
-        var preparation: String
-        var popularity: Int
-        var numberOfPeople: Int
 
         RecipeDBHelper.instance.use {
 
@@ -53,7 +62,7 @@ class RecipeActivity : Activity() {
                         if (numberOfPeople > 1) recipeInfo += " ${getString(R.string.recipe_info_persons)}"
                         else recipeInfo += " ${getString(R.string.recipe_info_person)}"
 
-                        recipe_name.text = recipeName
+                        recipe_name.setText(recipeName)
                         recipe_info.text = recipeInfo
                         recipe_preparation.text = preparation
                     })
@@ -63,8 +72,6 @@ class RecipeActivity : Activity() {
 
     // Get ingredients for a specific recipe
     fun getIngredientsForRecipe(id: Int) {
-
-        var ingredientsInRecipe = listOf<Triple<String, Double, String>>()
 
         RecipeDBHelper.instance.use {
 
@@ -139,6 +146,45 @@ class RecipeActivity : Activity() {
             tableRow.addView(textViewUnit)
             ingredients_table.addView(tableRow)
         }
+    }
+
+
+    fun editSaveRecipe() {
+
+        toast("edit saved")
+        if(!editModeEnabled) editRecipe()
+        else saveRecipe()
+    }
+
+    // Enables recipe editing
+    fun editRecipe() {
+
+        toast("edit")
+        editModeEnabled = true
+        button_edit_save.setText("${getString(R.string.save)}")
+        recipe_name.isCursorVisible = true
+        recipe_name.isClickable = true
+        recipe_name.isFocusable = true
+        recipe_name.isFocusableInTouchMode = true
+
+//        recipe_name.setTextAppearance(recipe_name.context, R.style.edit_text_style)
+
+    }
+
+    fun saveRecipe() {
+
+        toast("save")
+        editModeEnabled = false
+
+        button_edit_save.setText("${getString(R.string.edit)}")
+
+//        recipe_name.setTextAppearance(this, R.style.disable_edit_text_style)
+        recipe_name.isCursorVisible = false
+        recipe_name.isClickable = false
+        recipe_name.isFocusable = false
+        recipe_name.isFocusableInTouchMode = false
+
+        inputMethodManager.hideSoftInputFromWindow(recipe_detail.windowToken, 0)
     }
 
 
