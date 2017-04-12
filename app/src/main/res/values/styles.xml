@@ -8,7 +8,6 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-
     <style name="edit_text_style">
         <item name="android:cursorVisible">true</item>
         <item name="android:clickable">true</item>
@@ -22,4 +21,5 @@
         <item name="android:focusable">false</item>
         <item name="android:focusableInTouchMode">false</item>
     </style>
+
 </resources>

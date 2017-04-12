@@ -2,20 +2,15 @@ package pc.inspiredfood
 
 import android.app.Activity
 import android.os.Bundle
-import android.text.InputType
 import android.util.TypedValue
-import android.view.Gravity
-import android.widget.LinearLayout
+import android.view.*
+import android.widget.EditText
 import android.widget.TableRow
 import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_recipe.*
-import org.jetbrains.anko.applyRecursively
-import org.jetbrains.anko.custom.style
+import org.jetbrains.anko.*
 import org.jetbrains.anko.db.rowParser
 import org.jetbrains.anko.db.select
-import org.jetbrains.anko.inputMethodManager
-import org.jetbrains.anko.onClick
-import org.jetbrains.anko.toast
 
 class RecipeActivity : Activity() {
 
@@ -27,17 +22,17 @@ class RecipeActivity : Activity() {
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_recipe)
+
+        makeViewsUneditable()
+        button_edit_save.onClick { editOrSaveRecipe() }
     }
 
 
     override fun onResume() {
 
         super.onResume()
+
         val id = intent.getIntExtra(C.recipeId, -1)
-
-        recipe_name.isFocusable = false
-        button_edit_save.onClick { editSaveRecipe() }
-
         getRecipeDetails(id)
         getIngredientsForRecipe(id)
     }
@@ -59,6 +54,7 @@ class RecipeActivity : Activity() {
                         recipeName: String, categoryName: String, preparation: String, numberOfPeople: Int ->
 
                         var recipeInfo = "${translateCategory(categoryName)} ${getString(R.string.recipe_info_for)} $numberOfPeople"
+
                         if (numberOfPeople > 1) recipeInfo += " ${getString(R.string.recipe_info_persons)}"
                         else recipeInfo += " ${getString(R.string.recipe_info_person)}"
 
@@ -98,7 +94,7 @@ class RecipeActivity : Activity() {
     // Create table rows and insert data in rows
     fun createTableRows(ingredientsInRecipe: List<Triple<String, Double, String>>) {
 
-        // Create a table row foreach element in the list and display ingredient info
+        // Create a table row for each element in the list and display ingredient info
         for(ingredientLine in ingredientsInRecipe) {
 
             // Create table row
@@ -149,9 +145,9 @@ class RecipeActivity : Activity() {
     }
 
 
-    fun editSaveRecipe() {
 
-        toast("edit saved")
+    fun editOrSaveRecipe() {
+
         if(!editModeEnabled) editRecipe()
         else saveRecipe()
     }
@@ -159,33 +155,49 @@ class RecipeActivity : Activity() {
     // Enables recipe editing
     fun editRecipe() {
 
-        toast("edit")
         editModeEnabled = true
         button_edit_save.setText("${getString(R.string.save)}")
-        recipe_name.isCursorVisible = true
-        recipe_name.isClickable = true
-        recipe_name.isFocusable = true
-        recipe_name.isFocusableInTouchMode = true
-
-//        recipe_name.setTextAppearance(recipe_name.context, R.style.edit_text_style)
-
+        makeViewsEditable()
     }
 
     fun saveRecipe() {
 
-        toast("save")
         editModeEnabled = false
-
         button_edit_save.setText("${getString(R.string.edit)}")
-
-//        recipe_name.setTextAppearance(this, R.style.disable_edit_text_style)
-        recipe_name.isCursorVisible = false
-        recipe_name.isClickable = false
-        recipe_name.isFocusable = false
-        recipe_name.isFocusableInTouchMode = false
-
+        makeViewsUneditable()
         inputMethodManager.hideSoftInputFromWindow(recipe_detail.windowToken, 0)
     }
+
+    fun makeViewsEditable() {
+
+        makeViewEditable(recipe_name)
+
+        var test = ingredients_table
+
+    }
+
+    fun makeViewsUneditable() {
+
+        makeViewUneditable(recipe_name)
+    }
+
+    fun makeViewEditable(view: EditText) {
+
+        view.isCursorVisible = true
+        view.isClickable = true
+        view.isFocusable = true
+        view.isFocusableInTouchMode = true
+    }
+
+    fun makeViewUneditable(view: EditText) {
+
+        view.isCursorVisible = false
+        view.isClickable = false
+        view.isFocusable = false
+        view.isFocusableInTouchMode = false
+    }
+
+
 
 
     // Convert DP to Pixel

@@ -39,7 +39,8 @@
                 android:layout_gravity="center"
                 android:textColor="#000000"
                 android:textSize="30sp"
-                android:background="@null"/>
+                android:background="@null"
+                style="@style/disable_edit_text_style"/>
 
             <TextView
                 android:id="@+id/recipe_info"
@@ -90,7 +91,7 @@
                 android:background="@drawable/cell"/>
 
         </LinearLayout>
-    </ScrollView>
 
+    </ScrollView>
 
 </LinearLayout>
