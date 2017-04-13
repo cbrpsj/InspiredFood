@@ -10,6 +10,7 @@
     android:paddingTop="5dp"
     android:paddingEnd="5dp"
     android:orientation="vertical"
+    android:background="@color/backgroundWhite"
     tools:context="pc.inspiredfood.RecipeActivity">
 
     <Button
@@ -37,10 +38,9 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="5dp"
                 android:layout_gravity="center"
-                android:textColor="#000000"
+                android:textColor="@color/defaultBlack"
                 android:textSize="30sp"
-                android:background="@null"
-                style="@style/disable_edit_text_style"/>
+                android:background="@null" />
 
             <TextView
                 android:id="@+id/recipe_info"
@@ -48,7 +48,7 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="5dp"
                 android:layout_gravity="center"
-                android:textColor="#707070"
+                android:textColor="@color/cellTextColor"
                 android:textSize="15sp"
                 android:textStyle="italic"/>
 
@@ -57,7 +57,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingTop="30dp"
-                android:textColor="#000000"
+                android:textColor="@color/defaultBlack"
                 android:textSize="20sp"
                 android:text="@string/ingredients"/>
 
@@ -69,16 +69,16 @@
             </TableLayout>
 
             <TextView
-                android:id="@+id/recipe_instructions_headline"
+                android:id="@+id/recipe_preparation_headline"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingTop="30dp"
                 android:paddingBottom="5dp"
-                android:textColor="#000000"
+                android:textColor="@color/defaultBlack"
                 android:textSize="20sp"
                 android:text="@string/preparation"/>
 
-            <TextView
+            <EditText
                 android:id="@+id/recipe_preparation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -86,7 +86,7 @@
                 android:paddingTop="5dp"
                 android:paddingEnd="7dp"
                 android:paddingBottom="5dp"
-                android:textColor="#707070"
+                android:textColor="@color/cellTextColor"
                 android:textSize="17sp"
                 android:background="@drawable/cell"/>
 

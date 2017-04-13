@@ -8,11 +8,9 @@ class RecipeDBHelper(context: Context = App.instance, version: Int = 16) :
         ManagedSQLiteOpenHelper(context, C.dbName, null, version) {
 
     companion object {
-        // Test: uden companion object
         val instance by lazy { RecipeDBHelper() }
     }
 
-    // test: slettet ? efter SQLiteDatabase i onCreate og onUpgrade
     override fun onCreate(db: SQLiteDatabase) {
 
         db.createTable(C.CategoriesTable.tableName, true,

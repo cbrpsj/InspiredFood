@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/backgroundWhite"
     tools:context="pc.inspiredfood.RecipeListActivity">
 
     <RelativeLayout
@@ -15,16 +16,16 @@
         android:paddingTop="5dp"
         android:paddingRight="5dp"
         android:paddingBottom="5dp"
-        android:background="#E3E9FF">
+        android:background="@color/backgroundBlue">
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/inspiredfood_headline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:textSize="30sp"
-            android:textColor="#000000"
+            android:textColor="@color/defaultBlack"
             android:text="@string/app_name" />
 
         <Button
@@ -45,57 +46,32 @@
         android:orientation="horizontal"
         android:paddingTop="10dp"
         android:paddingBottom="20dp"
-        android:background="#E3E9FF">
+        android:background="@color/backgroundBlue">
 
         <RadioButton
             android:id="@+id/starters"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:buttonTint="#000000"
             android:text="@string/starters"
-            android:textSize="12.5dp"
-            android:onClick="mainButtonClicked" />
+            style="@style/radioButtonStyle" />
 
         <RadioButton
             android:id="@+id/mains"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:buttonTint="#000000"
             android:text="@string/mains"
-            android:textSize="12.5dp"
-            android:onClick="mainButtonClicked" />
+            style="@style/radioButtonStyle" />
 
         <RadioButton
             android:id="@+id/desserts"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:buttonTint="#000000"
             android:text="@string/desserts"
-            android:textSize="12.5dp"
-            android:onClick="mainButtonClicked" />
+            style="@style/radioButtonStyle" />
 
         <RadioButton
             android:id="@+id/favourites"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:buttonTint="#000000"
             android:text="@string/favourites"
-            android:textSize="12.5dp"
-            android:onClick="mainButtonClicked" />
+            style="@style/radioButtonStyle" />
 
         <RadioButton
             android:id="@+id/all"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:buttonTint="#000000"
             android:text="@string/all"
-            android:textSize="12.5dp"
-            android:onClick="mainButtonClicked" />
+            style="@style/radioButtonStyle" />
 
     </RadioGroup>
 

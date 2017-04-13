@@ -33,21 +33,3 @@ class RecipeAdapter(context: Context, val recipes: List<Recipe>):
         return view
     }
 }
-
-//// Map data from a cursor to the elements in the listView
-//class RecipeCursorAdapter(context: Context, cursor: Cursor, flags: Int) : CursorAdapter(context, cursor, flags) {
-//
-//    override fun newView(context: Context, cursor: Cursor, parent: ViewGroup): View {
-//
-//        return LayoutInflater
-//                .from(context)
-//                .inflate(R.layout.item_recipe, parent, false)
-//    }
-//
-//    // Set tag and text content of visual item
-//    override fun bindView(view: View, context: Context, cursor: Cursor) {
-//
-//        view.tag = cursor.getInt(cursor.getColumnIndex(C.RecipesTable.id))
-//        view.textRecipeMain.setText(cursor.getString(cursor.getColumnIndex(C.RecipesTable.recipeName)))
-//    }
-//}

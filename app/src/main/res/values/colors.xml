@@ -3,4 +3,9 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="defaultBlack">#000000</color>
+    <color name="cellTextColor">#707070</color>
+    <color name="backgroundEditMode">#FFF0F0</color>
+    <color name="backgroundBlue">#E3E9FF</color>
+    <color name="backgroundWhite">#FAFAFA</color>
 </resources>
