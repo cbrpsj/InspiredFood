@@ -7,9 +7,6 @@ import android.widget.ListView
 import kotlinx.android.synthetic.main.activity_recipe_list.*
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.toast
-import pc.inspiredfood.App.Companion.categories
-import pc.inspiredfood.App.Companion.ingredients
-import pc.inspiredfood.App.Companion.units
 import pc.inspiredfood.App.Companion.updateRecipeList
 import pc.inspiredfood.CRUD.getCategories
 import pc.inspiredfood.CRUD.getIngredients

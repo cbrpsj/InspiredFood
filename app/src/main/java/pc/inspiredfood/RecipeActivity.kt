@@ -8,21 +8,16 @@ import android.widget.EditText
 import android.widget.TableRow
 import kotlinx.android.synthetic.main.activity_recipe.*
 import org.jetbrains.anko.*
-import org.jetbrains.anko.db.*
-import pc.inspiredfood.App.Companion.ingredients
-import pc.inspiredfood.App.Companion.units
 import pc.inspiredfood.App.Companion.updateRecipeList
 import pc.inspiredfood.CRUD.createIngredient
 import pc.inspiredfood.CRUD.createIngredientsInRecipe
 import pc.inspiredfood.CRUD.createUnit
 import pc.inspiredfood.CRUD.deleteIngredientsInRecipe
 import pc.inspiredfood.CRUD.getIngredientId
-import pc.inspiredfood.CRUD.getIngredients
 import pc.inspiredfood.CRUD.getPreparation
 import pc.inspiredfood.CRUD.getIngredientsInRecipe
 import pc.inspiredfood.CRUD.getRecipeName
 import pc.inspiredfood.CRUD.getUnitId
-import pc.inspiredfood.CRUD.getUnits
 import pc.inspiredfood.CRUD.updatePreparation
 import pc.inspiredfood.CRUD.updateRecipeName
 
@@ -37,9 +32,13 @@ class RecipeActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_recipe)
 
+        // Set id to Int sent in intent from previous activity
         id = intent.getIntExtra(C.recipeId, -1)
+
         getRecipeDetails(id)
-        makeViewsUneditable()
+        makeViewsUneditable()       // Default setting
+
+        // Set event listener
         button_edit_save.onClick { toggleEditMode() }
     }
 
@@ -58,29 +57,6 @@ class RecipeActivity : Activity() {
         recipe_name.setText(getRecipeName(id))
         recipe_preparation.setText(getPreparation(id))
         createTableRows(ingredientsInRecipe)
-
-//        RecipeDBHelper.instance.use {
-//
-//            // Query db for all recipes, orderBy recipeName and parse result to a list
-//            select( C.RecipesTable.tableName+","+C.CategoriesTable.tableName,
-//                    C.RecipesTable.recipeName, C.CategoriesTable.categoryName, C.RecipesTable.preparation, C.RecipesTable.numberOfPeople)
-//                    .where( "$id = " +
-//                            "${C.RecipesTable.tableName}.${C.RecipesTable.id} and " +
-//                            "${C.RecipesTable.tableName}.${C.RecipesTable.category} = " +
-//                            "${C.CategoriesTable.tableName}.${C.CategoriesTable.id}")
-//                    .parseSingle(rowParser {
-//                        recipeName: String, categoryName: String, preparation: String, numberOfPeople: Int ->
-//
-//                        var recipeInfo = "${translateCategory(categoryName)} ${getString(R.string.recipe_info_for)} $numberOfPeople"
-//
-//                        if (numberOfPeople > 1) recipeInfo += " ${getString(R.string.recipe_info_persons)}"
-//                        else recipeInfo += " ${getString(R.string.recipe_info_person)}"
-//
-//                        recipe_name.setText(recipeName)
-//                        recipe_info.text = recipeInfo
-//                        recipe_preparation.setText(preparation)
-//                    })
-//        }
     }
 
 
@@ -112,6 +88,7 @@ class RecipeActivity : Activity() {
             // Align text in amount EditText view to the right
             editTextViewAmount.gravity = Gravity.END
 
+            // Set attributes for all three EditText views in the table row
             setEditTextViewAttributes(editTextViewIngredient, ingredientLine.first, 0, 0, 0, 0)
             setEditTextViewAttributes(editTextViewAmount, ingredientLine.second.toString(), dpToPixel(15f), 0, dpToPixel(10f), 0)
             setEditTextViewAttributes(editTextViewUnit, ingredientLine.third, 0, 0, 0, 0)
@@ -128,19 +105,17 @@ class RecipeActivity : Activity() {
     // Set attributes to an EditText view
     fun setEditTextViewAttributes(editTextView: EditText, text: String, left: Int, top: Int, right: Int, bottom: Int)
     {
-        val textType = TypedValue.COMPLEX_UNIT_SP
-        val textSize = 17f
-
         // Remove underlining in EditText
         editTextView.background = null
 
         editTextView.setPadding(left, top, right, bottom)
         editTextView.textColor = R.color.cellTextColor
         editTextView.setText(text)
-        editTextView.setTextSize(textType, textSize)
+        editTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 17f)
     }
 
 
+    // Toggle between edit mode and read-only mode
     fun toggleEditMode() {
 
         if(!editModeEnabled) enterEditMode()
@@ -200,6 +175,7 @@ class RecipeActivity : Activity() {
     }
 
 
+    // Set attributes to enable editing in an EditText view
     fun makeViewEditable(view: EditText) {
 
         view.isCursorVisible = true
@@ -209,6 +185,7 @@ class RecipeActivity : Activity() {
     }
 
 
+    // Set attributes to disable editing in an EditText view
     fun makeViewUneditable(view: EditText) {
 
         view.isCursorVisible = false
@@ -218,23 +195,29 @@ class RecipeActivity : Activity() {
     }
 
 
+    // Save all fields in the recipe in the DB
     fun saveRecipe() {
 
         val ingredientsInRecipe = mutableListOf<Triple<Int, Double, Int>>()
         val tableRows = ingredients_table.childrenSequence()
 
-        // Get ingredients from table rows
+        // Get ingredients in the table
         for(tableRow in tableRows) {
 
-            val ingredientName = ((tableRow as TableRow).getChildAt(0) as EditText).text.toString()
+            // Cast to TableRow
+            tableRow as TableRow
+
+            // Get values from EditText views in tableRow
+            val ingredientName = (tableRow.getChildAt(0) as EditText).text.toString()
+            val amount = (tableRow.getChildAt(1) as EditText).text.toString().toDouble()
             val unitName = (tableRow.getChildAt(2) as EditText).text.toString()
 
             // Create potentially new ingredient and unit in DB
             createIngredient(ingredientName)
             createUnit(unitName)
 
+            // Get ingredientId and unitId from DB
             val ingredientId = getIngredientId(ingredientName)
-            val amount = (tableRow.getChildAt(1) as EditText).text.toString().toDouble()
             val unitId = getUnitId(unitName)
 
             // Add ingredient to list of ingredients in recipe
@@ -245,7 +228,7 @@ class RecipeActivity : Activity() {
         updateRecipeName(id, recipe_name.text.toString())
         updatePreparation(id, recipe_preparation.text.toString())
 
-        // Delete all previous ingredients in the recipe, afterwards add all ingredients from UI to DB
+        // Delete all previous ingredients in recipe, afterwards add all ingredients from UI to DB
         deleteIngredientsInRecipe(id)
         createIngredientsInRecipe(id, ingredientsInRecipe)
 

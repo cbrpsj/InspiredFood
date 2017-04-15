@@ -7,43 +7,51 @@ import org.jetbrains.anko.db.*
 import pc.inspiredfood.App.Companion.categories
 import pc.inspiredfood.App.Companion.ingredients
 import pc.inspiredfood.App.Companion.units
-import org.jetbrains.anko.toast
 
 
 
 object CRUD {
 
-    // CREATE Operations:
+    /********* CREATE Operations: ********/
+
 
     // CREATE Single ingredient
     fun createIngredient(ingredient: String) {
 
+        // When ingredient already exist, return
         if (ingredients.contains(ingredient))
             return
 
+        // Else add ingredient to DB
         RecipeDBHelper.instance.use {
 
             insert( C.IngredientsTable.tableName,
                     C.IngredientsTable.ingredientName to ingredient)
         }
 
+        // Add new ingredient to hashSet
         ingredients.add(ingredient)
     }
+
 
     // CREATE Single unit
     fun createUnit(unit: String) {
 
+        // When unit already exist, return
         if (units.contains(unit))
             return
 
+        // Else add unit to DB
         RecipeDBHelper.instance.use {
 
             insert( C.UnitsTable.tableName,
                     C.UnitsTable.unitName to unit)
         }
 
+        // Add new unit to hashSet
         units.add(unit)
     }
+
 
     // CREATE Several ingredients in a specific recipe
     fun createIngredientsInRecipe(recipeId: Int, ingredients: List<Triple<Int, Double, Int>>) {
@@ -63,9 +71,10 @@ object CRUD {
 
 
 
-    // READ Operations:
+    /********* READ Operations: *********/
 
-    // READ Single ingredient id
+
+    // READ single ingredient id
     fun getIngredientId(ingredient: String): Int {
 
         var ingredientId = 0
@@ -79,6 +88,7 @@ object CRUD {
 
         return ingredientId
     }
+
 
     // READ Single unit id
     fun getUnitId(unit: String): Int {
@@ -96,6 +106,39 @@ object CRUD {
     }
 
 
+    // READ Single recipe name
+    fun getRecipeName(recipeId: Int): String {
+
+        var recipeName = ""
+
+        RecipeDBHelper.instance.use {
+
+            select(C.RecipesTable.tableName, C.RecipesTable.recipeName)
+                    .where( "$recipeId = ${C.RecipesTable.tableName}.${C.RecipesTable.id}")
+                    .parseSingle( rowParser { name: String -> recipeName = name })
+        }
+
+        return recipeName
+    }
+
+
+    // READ Single preparation
+    fun getPreparation(recipeId: Int): String {
+
+        var preparation = ""
+
+        RecipeDBHelper.instance.use {
+
+            select(C.RecipesTable.tableName, C.RecipesTable.preparation)
+                    .where( "$recipeId = ${C.RecipesTable.tableName}.${C.RecipesTable.id}")
+                    .parseSingle( rowParser { prep: String -> preparation = prep })
+        }
+
+        return preparation
+    }
+
+
+    // READ List of recipes
     fun getRecipes(): List<Recipe> {
 
         var recipes: List<Recipe> = mutableListOf()
@@ -122,6 +165,7 @@ object CRUD {
     }
 
 
+    // READ List of categories
     fun getCategories() {
 
         var tmpCategories: List<String> = mutableListOf()
@@ -138,7 +182,7 @@ object CRUD {
     }
 
 
-
+    // READ List of ingredients
     fun getIngredients() {
 
         var tmpIngredients: List<String> = mutableListOf()
@@ -155,6 +199,7 @@ object CRUD {
     }
 
 
+    // READ List of units
     fun getUnits() {
 
         var tmpUnits: List<String> = mutableListOf()
@@ -171,6 +216,7 @@ object CRUD {
     }
 
 
+    // READ List of all ingredients in a specific recipe
     fun getIngredientsInRecipe(recipeId: Int): List<Triple<String, Double, String>> {
 
         var ingredientsInRecipe: List<Triple<String, Double, String>> = mutableListOf()
@@ -197,39 +243,11 @@ object CRUD {
     }
 
 
-    fun getRecipeName(recipeId: Int): String {
 
-        var recipeName = ""
-
-        RecipeDBHelper.instance.use {
-
-            select(C.RecipesTable.tableName, C.RecipesTable.recipeName)
-                    .where( "$recipeId = ${C.RecipesTable.tableName}.${C.RecipesTable.id}")
-                    .parseSingle( rowParser { name: String -> recipeName = name })
-        }
-
-        return recipeName
-    }
+    /********* UPDATE Operations: *********/
 
 
-    fun getPreparation(recipeId: Int): String {
-
-        var preparation = ""
-
-        RecipeDBHelper.instance.use {
-
-            select(C.RecipesTable.tableName, C.RecipesTable.preparation)
-                    .where( "$recipeId = ${C.RecipesTable.tableName}.${C.RecipesTable.id}")
-                    .parseSingle( rowParser { prep: String -> preparation = prep })
-        }
-
-        return preparation
-    }
-
-
-    // UPDATE Operations:
-
-    // Update recipe popularity
+    // UPDATE Single recipe popularity
     fun updatePopularity(recipeId: Int, popularity: Int) {
 
         RecipeDBHelper.instance.use {
@@ -240,7 +258,8 @@ object CRUD {
         }
     }
 
-    // Update recipe name
+
+    // UPDATE Single recipe name
     fun updateRecipeName(recipeId: Int, recipeName: String) {
 
         RecipeDBHelper.instance.use {
@@ -251,7 +270,8 @@ object CRUD {
         }
     }
 
-    // Update recipe preparation
+
+    // UPDATE Single recipe preparation
     fun updatePreparation(recipeId: Int, preparation: String) {
 
         RecipeDBHelper.instance.use {
@@ -263,9 +283,11 @@ object CRUD {
     }
 
 
-    // DELETE Operations:
 
-    // Delete all ingredients in a specific recipe
+    /******** DELETE Operations: *********/
+
+
+    // DELETE all ingredients in a specific recipe
     fun deleteIngredientsInRecipe(recipeId: Int) {
 
         RecipeDBHelper.instance.use {
