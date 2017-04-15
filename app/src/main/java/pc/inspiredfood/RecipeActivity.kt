@@ -1,7 +1,6 @@
 package pc.inspiredfood
 
 import android.app.Activity
-import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.*
@@ -9,10 +8,23 @@ import android.widget.EditText
 import android.widget.TableRow
 import kotlinx.android.synthetic.main.activity_recipe.*
 import org.jetbrains.anko.*
-import org.jetbrains.anko.db.rowParser
-import org.jetbrains.anko.db.select
 import org.jetbrains.anko.db.*
+import pc.inspiredfood.App.Companion.ingredients
+import pc.inspiredfood.App.Companion.units
 import pc.inspiredfood.App.Companion.updateRecipeList
+import pc.inspiredfood.CRUD.createIngredient
+import pc.inspiredfood.CRUD.createIngredientsInRecipe
+import pc.inspiredfood.CRUD.createUnit
+import pc.inspiredfood.CRUD.deleteIngredientsInRecipe
+import pc.inspiredfood.CRUD.getIngredientId
+import pc.inspiredfood.CRUD.getIngredients
+import pc.inspiredfood.CRUD.getPreparation
+import pc.inspiredfood.CRUD.getIngredientsInRecipe
+import pc.inspiredfood.CRUD.getRecipeName
+import pc.inspiredfood.CRUD.getUnitId
+import pc.inspiredfood.CRUD.getUnits
+import pc.inspiredfood.CRUD.updatePreparation
+import pc.inspiredfood.CRUD.updateRecipeName
 
 class RecipeActivity : Activity() {
 
@@ -27,8 +39,6 @@ class RecipeActivity : Activity() {
 
         id = intent.getIntExtra(C.recipeId, -1)
         getRecipeDetails(id)
-        getIngredientsForRecipe(id)
-
         makeViewsUneditable()
         button_edit_save.onClick { toggleEditMode() }
     }
@@ -43,55 +53,34 @@ class RecipeActivity : Activity() {
     // Get details about a specific recipe
     fun getRecipeDetails(id: Int) {
 
-        RecipeDBHelper.instance.use {
+        val ingredientsInRecipe = getIngredientsInRecipe(id)
 
-            // Query db for all recipes, orderBy recipeName and parse result to a list
-            select( C.RecipesTable.tableName+","+C.CategoriesTable.tableName,
-                    C.RecipesTable.recipeName, C.CategoriesTable.categoryName, C.RecipesTable.preparation, C.RecipesTable.numberOfPeople)
-                    .where("$id = " +
-                            "${C.RecipesTable.tableName}.${C.RecipesTable.id} and " +
-                            "${C.RecipesTable.tableName}.${C.RecipesTable.category} = " +
-                            "${C.CategoriesTable.tableName}.${C.CategoriesTable.id}")
-                    .parseSingle(rowParser {
-                        recipeName: String, categoryName: String, preparation: String, numberOfPeople: Int ->
-
-                        var recipeInfo = "${translateCategory(categoryName)} ${getString(R.string.recipe_info_for)} $numberOfPeople"
-
-                        if (numberOfPeople > 1) recipeInfo += " ${getString(R.string.recipe_info_persons)}"
-                        else recipeInfo += " ${getString(R.string.recipe_info_person)}"
-
-                        recipe_name.setText(recipeName)
-                        recipe_info.text = recipeInfo
-                        recipe_preparation.setText(preparation)
-                    })
-        }
-    }
-
-
-    // Get ingredients for a specific recipe
-    fun getIngredientsForRecipe(id: Int) {
-
-        var ingredientsInRecipe = listOf<Triple<String, Double, String>>()
-
-        RecipeDBHelper.instance.use {
-
-            // Query db for all ingredients in a recipe and parse result to list of Triples
-            ingredientsInRecipe = select(
-                    C.IngredientsInRecipesTable.tableName+","+C.IngredientsTable.tableName+","+ C.UnitsTable.tableName,
-                    C.IngredientsTable.ingredientName, C.IngredientsInRecipesTable.amount, C.UnitsTable.unitName)
-                    .where("$id = " +
-                            "${C.IngredientsInRecipesTable.tableName}.${C.IngredientsInRecipesTable.recipeId} and " +
-                            "${C.IngredientsInRecipesTable.tableName}.${C.IngredientsInRecipesTable.ingredientId} =" +
-                            "${C.IngredientsTable.tableName}.${C.IngredientsTable.id} and " +
-                            "${C.IngredientsInRecipesTable.tableName}.${C.IngredientsInRecipesTable.unitId} =" +
-                            "${C.UnitsTable.tableName}.${C.UnitsTable.id}")
-                    .parseList(rowParser {
-                        ingredientName: String, amount: Double, unit: String ->
-                        Triple(ingredientName, amount, unit)
-                    })
-        }
-
+        recipe_name.setText(getRecipeName(id))
+        recipe_preparation.setText(getPreparation(id))
         createTableRows(ingredientsInRecipe)
+
+//        RecipeDBHelper.instance.use {
+//
+//            // Query db for all recipes, orderBy recipeName and parse result to a list
+//            select( C.RecipesTable.tableName+","+C.CategoriesTable.tableName,
+//                    C.RecipesTable.recipeName, C.CategoriesTable.categoryName, C.RecipesTable.preparation, C.RecipesTable.numberOfPeople)
+//                    .where( "$id = " +
+//                            "${C.RecipesTable.tableName}.${C.RecipesTable.id} and " +
+//                            "${C.RecipesTable.tableName}.${C.RecipesTable.category} = " +
+//                            "${C.CategoriesTable.tableName}.${C.CategoriesTable.id}")
+//                    .parseSingle(rowParser {
+//                        recipeName: String, categoryName: String, preparation: String, numberOfPeople: Int ->
+//
+//                        var recipeInfo = "${translateCategory(categoryName)} ${getString(R.string.recipe_info_for)} $numberOfPeople"
+//
+//                        if (numberOfPeople > 1) recipeInfo += " ${getString(R.string.recipe_info_persons)}"
+//                        else recipeInfo += " ${getString(R.string.recipe_info_person)}"
+//
+//                        recipe_name.setText(recipeName)
+//                        recipe_info.text = recipeInfo
+//                        recipe_preparation.setText(preparation)
+//                    })
+//        }
     }
 
 
@@ -104,13 +93,9 @@ class RecipeActivity : Activity() {
             // Create table row
             val tableRow = TableRow(this)
             val layoutParams = TableRow.LayoutParams()
-            val textTypeValue = TypedValue.COMPLEX_UNIT_SP
-            val textSize = 17f
 
-            // Set padding for table row
+            // Set padding and border for table row
             tableRow.setPadding(dpToPixel(5f), dpToPixel(5f), dpToPixel(7f), dpToPixel(5f))
-
-            // Set table row border using drawable shape under resource
             tableRow.background = getDrawable(R.drawable.cell)
 
             // Set weight (used in ingredient text view). Ensure space between ingredient and amount
@@ -121,43 +106,15 @@ class RecipeActivity : Activity() {
             val editTextViewAmount = EditText(this)
             val editTextViewUnit = EditText(this)
 
-            // Remove underlining in EditText views
-            editTextViewIngredient.background = null
-            editTextViewAmount.background = null
-            editTextViewUnit.background = null
-
-            // Set padding for EditText views
-            editTextViewIngredient.setPadding(0, 0, 0, 0)
-            editTextViewAmount.setPadding(0, 0, 0, 0)
-            editTextViewUnit.setPadding(0, 0, 0, 0)
-
-            editTextViewIngredient.textColor = R.color.cellTextColor
-            editTextViewAmount.textColor = R.color.cellTextColor
-            editTextViewUnit.textColor = R.color.cellTextColor
-
-            // Insert text in EditText views
-            editTextViewIngredient.setText(ingredientLine.first)
-            editTextViewAmount.setText(ingredientLine.second.toString())
-            editTextViewUnit.setText(ingredientLine.third)
-
-            // Set text size in EditText views
-            editTextViewIngredient.setTextSize(textTypeValue, textSize)
-            editTextViewAmount.setTextSize(textTypeValue, textSize)
-            editTextViewUnit.setTextSize(textTypeValue, textSize)
-
-            // Set padding (adds padding between the 3 EditText views)
-            editTextViewAmount.setPadding(dpToPixel(15f), 0, dpToPixel(10f), 0)
-
             // Apply weight to ingredient EditText view
             editTextViewIngredient.layoutParams = layoutParams
 
             // Align text in amount EditText view to the right
             editTextViewAmount.gravity = Gravity.END
 
-            // Set EditText views to uneditable state
-//            makeViewUneditable(editTextViewIngredient)
-//            makeViewUneditable(editTextViewAmount)
-//            makeViewUneditable(editTextViewUnit)
+            setEditTextViewAttributes(editTextViewIngredient, ingredientLine.first, 0, 0, 0, 0)
+            setEditTextViewAttributes(editTextViewAmount, ingredientLine.second.toString(), dpToPixel(15f), 0, dpToPixel(10f), 0)
+            setEditTextViewAttributes(editTextViewUnit, ingredientLine.third, 0, 0, 0, 0)
 
             // Add EditText views to table row, and add table row to table layout
             tableRow.addView(editTextViewIngredient)
@@ -168,12 +125,28 @@ class RecipeActivity : Activity() {
     }
 
 
+    // Set attributes to an EditText view
+    fun setEditTextViewAttributes(editTextView: EditText, text: String, left: Int, top: Int, right: Int, bottom: Int)
+    {
+        val textType = TypedValue.COMPLEX_UNIT_SP
+        val textSize = 17f
+
+        // Remove underlining in EditText
+        editTextView.background = null
+
+        editTextView.setPadding(left, top, right, bottom)
+        editTextView.textColor = R.color.cellTextColor
+        editTextView.setText(text)
+        editTextView.setTextSize(textType, textSize)
+    }
+
 
     fun toggleEditMode() {
 
         if(!editModeEnabled) enterEditMode()
         else exitEditModeAndSave()
     }
+
 
     // Enables recipe editing
     fun enterEditMode() {
@@ -184,6 +157,8 @@ class RecipeActivity : Activity() {
         makeViewsEditable()
     }
 
+
+    // Disable recipe editing and save the changes
     fun exitEditModeAndSave() {
 
         editModeEnabled = false
@@ -193,6 +168,7 @@ class RecipeActivity : Activity() {
         inputMethodManager.hideSoftInputFromWindow(recipe_detail.windowToken, 0)
         saveRecipe()
     }
+
 
     fun makeViewsEditable() {
 
@@ -208,6 +184,7 @@ class RecipeActivity : Activity() {
         }
     }
 
+
     fun makeViewsUneditable() {
 
         makeViewUneditable(recipe_name)
@@ -222,6 +199,7 @@ class RecipeActivity : Activity() {
         }
     }
 
+
     fun makeViewEditable(view: EditText) {
 
         view.isCursorVisible = true
@@ -229,6 +207,7 @@ class RecipeActivity : Activity() {
         view.isFocusable = true
         view.isFocusableInTouchMode = true
     }
+
 
     fun makeViewUneditable(view: EditText) {
 
@@ -238,25 +217,44 @@ class RecipeActivity : Activity() {
         view.isFocusableInTouchMode = false
     }
 
+
     fun saveRecipe() {
 
-        RecipeDBHelper.instance.use {
+        val ingredientsInRecipe = mutableListOf<Triple<Int, Double, Int>>()
+        val tableRows = ingredients_table.childrenSequence()
 
-            update( C.RecipesTable.tableName, 
-                    C.RecipesTable.recipeName to recipe_name.text.toString(),
-                    C.RecipesTable.preparation to recipe_preparation.text.toString())
-                    .where("$id = ${C.RecipesTable.tableName}.${C.RecipesTable.id}")
-                    .exec()
+        // Get ingredients from table rows
+        for(tableRow in tableRows) {
+
+            val ingredientName = ((tableRow as TableRow).getChildAt(0) as EditText).text.toString()
+            val unitName = (tableRow.getChildAt(2) as EditText).text.toString()
+
+            // Create potentially new ingredient and unit in DB
+            createIngredient(ingredientName)
+            createUnit(unitName)
+
+            val ingredientId = getIngredientId(ingredientName)
+            val amount = (tableRow.getChildAt(1) as EditText).text.toString().toDouble()
+            val unitId = getUnitId(unitName)
+
+            // Add ingredient to list of ingredients in recipe
+            ingredientsInRecipe.add(Triple(ingredientId, amount, unitId))
         }
+
+        // Update recipe name and preparation in DB
+        updateRecipeName(id, recipe_name.text.toString())
+        updatePreparation(id, recipe_preparation.text.toString())
+
+        // Delete all previous ingredients in the recipe, afterwards add all ingredients from UI to DB
+        deleteIngredientsInRecipe(id)
+        createIngredientsInRecipe(id, ingredientsInRecipe)
 
         updateRecipeList = true
     }
 
 
-
     // Convert DP to Pixel
     fun dpToPixel(dp: Float) = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.displayMetrics).toInt()
-
 
     // Get category in the correct language
     fun translateCategory(categoryName: String): String =
