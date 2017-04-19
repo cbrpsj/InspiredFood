@@ -305,7 +305,7 @@ class RecipeActivity : Activity() {
     }
 
 
-    // Update ingredient
+    // Update person_text and ingredient amount
     fun updatePersonTextAndIngredientAmounts(noOfPeople: Int) {
 
         // Find the updated number of people (string) from user input
@@ -345,9 +345,9 @@ class RecipeActivity : Activity() {
         for (i in categories.indices)
             if (getRecipeCategory(id) == categories[i]) return i
 
-        return 1 // default main course
+        return 1 // default main course - can be used for new recipes
     }
-    
+
 
     // Calculate ingredient amount based on number of people entered by user
     fun calculateAmount(noOfPeople: Int, newNoOfPeople: Int, amount: Double) =
