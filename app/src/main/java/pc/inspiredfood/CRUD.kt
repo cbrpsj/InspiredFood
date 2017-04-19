@@ -138,6 +138,22 @@ object CRUD {
     }
 
 
+    // READ Single number of people
+    fun getNoOfPeople(recipeId: Int): Int {
+
+        var noOfPeople = 0
+
+        RecipeDBHelper.instance.use {
+
+            select(C.RecipesTable.tableName, C.RecipesTable.numberOfPeople)
+                    .where( "$recipeId = ${C.RecipesTable.tableName}.${C.RecipesTable.id}")
+                    .parseSingle( rowParser { no: Int -> noOfPeople = no })
+        }
+
+        return noOfPeople
+    }
+
+
     // READ List of recipes
     fun getRecipes(): List<Recipe> {
 
@@ -168,17 +184,13 @@ object CRUD {
     // READ List of categories
     fun getCategories() {
 
-        var tmpCategories: List<String> = mutableListOf()
-
         RecipeDBHelper.instance.use {
 
-            tmpCategories = select(
+            categories = select(
                     C.CategoriesTable.tableName,
                     C.CategoriesTable.categoryName)
                     .parseList(rowParser { category: String -> category })
         }
-
-        categories = tmpCategories.toHashSet()
     }
 
 

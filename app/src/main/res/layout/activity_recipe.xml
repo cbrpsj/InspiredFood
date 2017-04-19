@@ -11,6 +11,8 @@
     android:paddingEnd="5dp"
     android:orientation="vertical"
     android:background="@color/backgroundWhite"
+    android:focusableInTouchMode="true"
+    android:clickable="true"
     tools:context="pc.inspiredfood.RecipeActivity">
 
     <Button
@@ -42,15 +44,65 @@
                 android:textSize="30sp"
                 android:background="@null" />
 
-            <TextView
-                android:id="@+id/recipe_info"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingTop="5dp"
-                android:layout_gravity="center"
-                android:textColor="@color/cellTextColor"
-                android:textSize="15sp"
-                android:textStyle="italic"/>
+                android:orientation="horizontal"
+                android:layout_gravity="center">
+
+                <Spinner
+                    android:id="@+id/spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/recipe_info_for"
+                    android:textSize="15sp"
+                    android:textStyle="italic"
+                    android:textColor="@color/defaultBlack"/>
+
+                <EditText
+                    android:id="@+id/no_of_persons"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:maxLines="1"
+                    android:maxLength="2"
+                    android:imeOptions="actionDone"
+                    android:selectAllOnFocus="true"
+                    android:textSize="15sp"
+                    android:textStyle="italic"
+                    android:textAlignment="center"
+                    android:textColor="@color/defaultBlack"/>
+
+                <TextView
+                    android:id="@+id/person_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textSize="15sp"
+                    android:textStyle="italic"
+                    android:textColor="@color/defaultBlack"/>
+
+            </LinearLayout>
+
+
+
+
+
+
+            <!--<TextView-->
+                <!--android:id="@+id/recipe_info"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:paddingTop="5dp"-->
+                <!--android:layout_gravity="center"-->
+                <!--android:textColor="@color/cellTextColor"-->
+                <!--android:textSize="15sp"-->
+                <!--android:textStyle="italic"/>-->
 
             <TextView
                 android:id="@+id/recipe_ingredients_headline"

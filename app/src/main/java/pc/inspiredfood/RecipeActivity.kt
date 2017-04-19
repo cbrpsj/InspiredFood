@@ -4,10 +4,14 @@ import android.app.Activity
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.*
+import android.view.inputmethod.EditorInfo
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.TableRow
 import kotlinx.android.synthetic.main.activity_recipe.*
 import org.jetbrains.anko.*
+import pc.inspiredfood.App.Companion.categories
 import pc.inspiredfood.App.Companion.updateRecipeList
 import pc.inspiredfood.CRUD.createIngredient
 import pc.inspiredfood.CRUD.createIngredientsInRecipe
@@ -16,6 +20,7 @@ import pc.inspiredfood.CRUD.deleteIngredientsInRecipe
 import pc.inspiredfood.CRUD.getIngredientId
 import pc.inspiredfood.CRUD.getPreparation
 import pc.inspiredfood.CRUD.getIngredientsInRecipe
+import pc.inspiredfood.CRUD.getNoOfPeople
 import pc.inspiredfood.CRUD.getRecipeName
 import pc.inspiredfood.CRUD.getUnitId
 import pc.inspiredfood.CRUD.updatePreparation
@@ -34,6 +39,8 @@ class RecipeActivity : Activity() {
 
         // Set id to Int sent in intent from previous activity
         id = intent.getIntExtra(C.recipeId, -1)
+
+        setupInfoLine()
 
         getRecipeDetails(id)
         makeViewsUneditable()       // Default setting
@@ -140,7 +147,7 @@ class RecipeActivity : Activity() {
         button_edit_save.setText("${getString(R.string.edit)}")
         recipe_detail.backgroundColor = resources.getColor(R.color.backgroundWhite, null)
         makeViewsUneditable()
-        inputMethodManager.hideSoftInputFromWindow(recipe_detail.windowToken, 0)
+        hideKeyboard()
         saveRecipe()
     }
 
@@ -148,6 +155,7 @@ class RecipeActivity : Activity() {
     fun makeViewsEditable() {
 
         makeViewEditable(recipe_name)
+        spinner.isEnabled = true
         makeViewEditable(recipe_preparation)
 
         val tableRows = ingredients_table.childrenSequence()
@@ -163,6 +171,7 @@ class RecipeActivity : Activity() {
     fun makeViewsUneditable() {
 
         makeViewUneditable(recipe_name)
+        spinner.isEnabled = false
         makeViewUneditable(recipe_preparation)
 
         val tableRows = ingredients_table.childrenSequence()
@@ -236,8 +245,76 @@ class RecipeActivity : Activity() {
     }
 
 
+    fun setupInfoLine() {
+
+        // Spinner (Dropdown)
+
+        val localised_categories = listOf<String>(getString(R.string.starter), getString(R.string.main), getString(R.string.dessert))
+
+        // Create arrayAdapter with our own item_spinner.xml
+        val spinnerAdapter = ArrayAdapter(this, R.layout.item_spinner, localised_categories)
+
+        //
+        spinner.adapter = spinnerAdapter
+        spinner.setSelection(1)
+
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+
+            }
+        }
+
+        // Numbers only EditText view
+
+        val noOfPeople = getNoOfPeople(id)
+
+        no_of_persons.setText(noOfPeople.toString())
+
+        // Listen for click on Done button on soft keyboard
+        no_of_persons.setOnEditorActionListener { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                hideKeyboard()
+                no_of_persons.clearFocus()
+                updateIngredientAmounts()
+                true
+            }
+            else false }
+
+        // Listen for change of focus away from EditText
+        no_of_persons.setOnFocusChangeListener { v, hasFocus -> if (!hasFocus) {
+            hideKeyboard()
+            updateIngredientAmounts()
+        } }
+
+        person_text.text =  if (noOfPeople < 2) getString(R.string.recipe_info_person)
+                            else getString(R.string.recipe_info_persons)
+    }
+
+
+    fun updateIngredientAmounts() {
+
+        val newNoOfPeopleString = no_of_persons.text.toString()
+        val newNoOfPeopleInt =  if (newNoOfPeopleString.isEmpty() || newNoOfPeopleString.toInt() < 1) 2
+                                else newNoOfPeopleString.toInt()
+
+        no_of_persons.setText(newNoOfPeopleInt.toString())
+
+        person_text.text =  if (newNoOfPeopleInt < 2) getString(R.string.recipe_info_person)
+                            else getString(R.string.recipe_info_persons)
+    }
+
+
+    fun hideKeyboard() { inputMethodManager.hideSoftInputFromWindow(recipe_detail.windowToken, 0)}
+
+
     // Convert DP to Pixel
     fun dpToPixel(dp: Float) = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.displayMetrics).toInt()
+
 
     // Get category in the correct language
     fun translateCategory(categoryName: String): String =
