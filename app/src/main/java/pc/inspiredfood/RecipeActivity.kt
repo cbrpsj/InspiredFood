@@ -21,15 +21,18 @@ import pc.inspiredfood.CRUD.getIngredientId
 import pc.inspiredfood.CRUD.getPreparation
 import pc.inspiredfood.CRUD.getIngredientsInRecipe
 import pc.inspiredfood.CRUD.getNoOfPeople
+import pc.inspiredfood.CRUD.getRecipeCategory
 import pc.inspiredfood.CRUD.getRecipeName
 import pc.inspiredfood.CRUD.getUnitId
 import pc.inspiredfood.CRUD.updatePreparation
 import pc.inspiredfood.CRUD.updateRecipeName
+import java.text.NumberFormat
 
 class RecipeActivity : Activity() {
 
     var id = 0
     var editModeEnabled = false
+    var ingredientsInRecipe: List<Triple<String, Double, String>> = mutableListOf()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,16 +62,16 @@ class RecipeActivity : Activity() {
     // Get details about a specific recipe
     fun getRecipeDetails(id: Int) {
 
-        val ingredientsInRecipe = getIngredientsInRecipe(id)
+        ingredientsInRecipe = getIngredientsInRecipe(id)
 
         recipe_name.setText(getRecipeName(id))
         recipe_preparation.setText(getPreparation(id))
-        createTableRows(ingredientsInRecipe)
+        createTableRows()
     }
 
 
     // Create table rows and insert data in rows
-    fun createTableRows(ingredientsInRecipe: List<Triple<String, Double, String>>) {
+    fun createTableRows() {
 
         // Create a table row for each element in the list and display ingredient info
         for(ingredientLine in ingredientsInRecipe) {
@@ -97,7 +100,7 @@ class RecipeActivity : Activity() {
 
             // Set attributes for all three EditText views in the table row
             setEditTextViewAttributes(editTextViewIngredient, ingredientLine.first, 0, 0, 0, 0)
-            setEditTextViewAttributes(editTextViewAmount, ingredientLine.second.toString(), dpToPixel(15f), 0, dpToPixel(10f), 0)
+            setEditTextViewAttributes(editTextViewAmount, formatAmount(ingredientLine.second), dpToPixel(15f), 0, dpToPixel(10f), 0)
             setEditTextViewAttributes(editTextViewUnit, ingredientLine.third, 0, 0, 0, 0)
 
             // Add EditText views to table row, and add table row to table layout
@@ -110,8 +113,7 @@ class RecipeActivity : Activity() {
 
 
     // Set attributes to an EditText view
-    fun setEditTextViewAttributes(editTextView: EditText, text: String, left: Int, top: Int, right: Int, bottom: Int)
-    {
+    fun setEditTextViewAttributes(editTextView: EditText, text: String, left: Int, top: Int, right: Int, bottom: Int) {
         // Remove underlining in EditText
         editTextView.background = null
 
@@ -254,9 +256,9 @@ class RecipeActivity : Activity() {
         // Create arrayAdapter with our own item_spinner.xml
         val spinnerAdapter = ArrayAdapter(this, R.layout.item_spinner, localised_categories)
 
-        //
+        // Set spinner adapter and set default selection to index 1 (Main course)
         spinner.adapter = spinnerAdapter
-        spinner.setSelection(1)
+        spinner.setSelection(findRecipeCategory())
 
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
 
@@ -269,10 +271,11 @@ class RecipeActivity : Activity() {
             }
         }
 
-        // Numbers only EditText view
 
+        // Number of persons EditText (Numbers only):
+
+        // Find number of people for this recipe and display in UI
         val noOfPeople = getNoOfPeople(id)
-
         no_of_persons.setText(noOfPeople.toString())
 
         // Listen for click on Done button on soft keyboard
@@ -280,32 +283,86 @@ class RecipeActivity : Activity() {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 hideKeyboard()
                 no_of_persons.clearFocus()
-                updateIngredientAmounts()
+                updatePersonTextAndIngredientAmounts(noOfPeople)
                 true
             }
-            else false }
+            else false
+        }
 
         // Listen for change of focus away from EditText
-        no_of_persons.setOnFocusChangeListener { v, hasFocus -> if (!hasFocus) {
-            hideKeyboard()
-            updateIngredientAmounts()
-        } }
+        no_of_persons.setOnFocusChangeListener { v, hasFocus ->
+            if (!hasFocus) {
+                hideKeyboard()
+                updatePersonTextAndIngredientAmounts(noOfPeople)
+            }
+        }
+
+
+        // Person EditText:
 
         person_text.text =  if (noOfPeople < 2) getString(R.string.recipe_info_person)
                             else getString(R.string.recipe_info_persons)
     }
 
 
-    fun updateIngredientAmounts() {
+    // Update ingredient
+    fun updatePersonTextAndIngredientAmounts(noOfPeople: Int) {
 
+        // Find the updated number of people (string) from user input
         val newNoOfPeopleString = no_of_persons.text.toString()
+
+        // When updated number of people is empty or < 1, number of people is set to 2
         val newNoOfPeopleInt =  if (newNoOfPeopleString.isEmpty() || newNoOfPeopleString.toInt() < 1) 2
                                 else newNoOfPeopleString.toInt()
 
+        // Display new number of people in UI
         no_of_persons.setText(newNoOfPeopleInt.toString())
 
+        // Update person text according to number of people
         person_text.text =  if (newNoOfPeopleInt < 2) getString(R.string.recipe_info_person)
                             else getString(R.string.recipe_info_persons)
+
+
+        // When edit mode is enabled, ingredient amount is not updated
+        if (editModeEnabled)
+            return
+
+        // Get all table rows from table layout
+        val tableRows = ingredients_table.childrenSequence()
+        var index = 0
+
+        // Get the EditText field for amount and display the updated ingredient amount for each tableRow
+        for(tableRow in tableRows) {
+
+            val ingredientView = (tableRow as TableRow).getChildAt(1) as EditText
+            ingredientView.setText(calculateAmount(noOfPeople, newNoOfPeopleInt, ingredientsInRecipe[index++].second))
+        }
+    }
+
+
+    fun findRecipeCategory(): Int {
+
+        for (i in categories.indices)
+            if (getRecipeCategory(id) == categories[i]) return i
+
+        return 1 // default main course
+    }
+    
+
+    // Calculate ingredient amount based on number of people entered by user
+    fun calculateAmount(noOfPeople: Int, newNoOfPeople: Int, amount: Double) =
+            if (newNoOfPeople == noOfPeople) formatAmount(amount)
+            else formatAmount((amount / noOfPeople) * newNoOfPeople)
+
+
+    // Convert amount (Double) to a string with between 0 - 2 decimals
+    fun formatAmount(amount: Double): String {
+
+        val formatter = NumberFormat.getInstance()
+        formatter.minimumFractionDigits = 0
+        formatter.maximumFractionDigits = 2
+
+        return formatter.format(amount)
     }
 
 

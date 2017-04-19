@@ -122,6 +122,24 @@ object CRUD {
     }
 
 
+    // READ Single category
+    fun getRecipeCategory(recipeId: Int): String {
+
+        var recipeCategory = ""
+
+        RecipeDBHelper.instance.use {
+
+            select(C.RecipesTable.tableName+","+C.CategoriesTable.tableName, C.CategoriesTable.categoryName)
+                    .where( "$recipeId = ${C.RecipesTable.tableName}.${C.RecipesTable.id} and " +
+                            "${C.RecipesTable.tableName}.${C.RecipesTable.category} = " +
+                            "${C.CategoriesTable.tableName}.${C.CategoriesTable.id}")
+                    .parseSingle( rowParser { category: String -> recipeCategory = category })
+        }
+
+        return recipeCategory
+    }
+
+
     // READ Single preparation
     fun getPreparation(recipeId: Int): String {
 
