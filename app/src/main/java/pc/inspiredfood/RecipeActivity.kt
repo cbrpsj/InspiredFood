@@ -44,8 +44,7 @@ class RecipeActivity : Activity() {
         id = intent.getIntExtra(C.recipeId, -1)
 
         setupInfoLine()
-
-        getRecipeDetails(id)
+        getRecipeDetails()
         makeViewsUneditable()       // Default setting
 
         // Set event listener
@@ -60,7 +59,7 @@ class RecipeActivity : Activity() {
 
 
     // Get details about a specific recipe
-    fun getRecipeDetails(id: Int) {
+    fun getRecipeDetails() {
 
         ingredientsInRecipe = getIngredientsInRecipe(id)
 
@@ -134,6 +133,9 @@ class RecipeActivity : Activity() {
 
     // Enables recipe editing
     fun enterEditMode() {
+
+        val noOfPeople = getNoOfPeople(id)
+        updatePersonTextAndIngredientAmounts(noOfPeople, true)
 
         editModeEnabled = true
         button_edit_save.setText("${getString(R.string.save)}")
@@ -220,7 +222,7 @@ class RecipeActivity : Activity() {
 
             // Get values from EditText views in tableRow
             val ingredientName = (tableRow.getChildAt(0) as EditText).text.toString()
-            val amount = (tableRow.getChildAt(1) as EditText).text.toString().toDouble()
+            val amount = (tableRow.getChildAt(1) as EditText).text.toString().replace(",", ".").toDouble()
             val unitName = (tableRow.getChildAt(2) as EditText).text.toString()
 
             // Create potentially new ingredient and unit in DB
@@ -283,7 +285,7 @@ class RecipeActivity : Activity() {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 hideKeyboard()
                 no_of_persons.clearFocus()
-                updatePersonTextAndIngredientAmounts(noOfPeople)
+                updatePersonTextAndIngredientAmounts(noOfPeople, false)
                 true
             }
             else false
@@ -293,7 +295,7 @@ class RecipeActivity : Activity() {
         no_of_persons.setOnFocusChangeListener { v, hasFocus ->
             if (!hasFocus) {
                 hideKeyboard()
-                updatePersonTextAndIngredientAmounts(noOfPeople)
+                updatePersonTextAndIngredientAmounts(noOfPeople, false)
             }
         }
 
@@ -306,13 +308,14 @@ class RecipeActivity : Activity() {
 
 
     // Update person_text and ingredient amount
-    fun updatePersonTextAndIngredientAmounts(noOfPeople: Int) {
+    fun updatePersonTextAndIngredientAmounts(noOfPeople: Int, reset: Boolean) {
 
         // Find the updated number of people (string) from user input
         val newNoOfPeopleString = no_of_persons.text.toString()
 
-        // When updated number of people is empty or < 1, number of people is set to 2
-        val newNoOfPeopleInt =  if (newNoOfPeopleString.isEmpty() || newNoOfPeopleString.toInt() < 1) 2
+        // If reset true, reset no of people from db. If empty or 0, set to 2, else set to user input
+        val newNoOfPeopleInt =  if (reset) noOfPeople
+                                else if (newNoOfPeopleString.isEmpty() || newNoOfPeopleString.toInt() < 1) 2
                                 else newNoOfPeopleString.toInt()
 
         // Display new number of people in UI
@@ -321,7 +324,6 @@ class RecipeActivity : Activity() {
         // Update person text according to number of people
         person_text.text =  if (newNoOfPeopleInt < 2) getString(R.string.recipe_info_person)
                             else getString(R.string.recipe_info_persons)
-
 
         // When edit mode is enabled, ingredient amount is not updated
         if (editModeEnabled)
@@ -366,7 +368,7 @@ class RecipeActivity : Activity() {
     }
 
 
-    fun hideKeyboard() { inputMethodManager.hideSoftInputFromWindow(recipe_detail.windowToken, 0)}
+    fun hideKeyboard() { inputMethodManager.hideSoftInputFromWindow(recipe_detail.windowToken, 0) }
 
 
     // Convert DP to Pixel
