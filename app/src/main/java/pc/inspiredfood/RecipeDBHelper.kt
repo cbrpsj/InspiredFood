@@ -7,10 +7,13 @@ import org.jetbrains.anko.db.*
 class RecipeDBHelper(context: Context = App.instance, version: Int = 1) :
         ManagedSQLiteOpenHelper(context, C.dbName, null, version) {
 
+    // Singleton DB instance
     companion object {
         val instance by lazy { RecipeDBHelper() }
     }
 
+
+    // Create DB structure and insert default data
     override fun onCreate(db: SQLiteDatabase) {
 
         db.createTable(C.CategoriesTable.tableName, true,
@@ -59,6 +62,8 @@ class RecipeDBHelper(context: Context = App.instance, version: Int = 1) :
         defaultData(db)
     }
 
+
+    // When there is a newer DB version, delete all tables and create new DB
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
 
         db.dropTable(C.CategoriesTable.tableName)

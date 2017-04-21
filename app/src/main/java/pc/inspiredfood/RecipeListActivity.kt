@@ -13,6 +13,7 @@ import org.jetbrains.anko.contentView
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.toast
 import pc.inspiredfood.App.Companion.updateRecipeList
+import pc.inspiredfood.CRUD.deleteRecipe
 import pc.inspiredfood.CRUD.getCategories
 import pc.inspiredfood.CRUD.getIngredients
 import pc.inspiredfood.CRUD.getRecipes
@@ -21,18 +22,18 @@ import pc.inspiredfood.CRUD.getUnits
 
 class RecipeListActivity : ListActivity() {
 
-    var recipes: List<Recipe> = mutableListOf()
+    var recipes = mutableListOf<Recipe>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_recipe_list)
 
+        // Enables menu on long press
         registerForContextMenu(list)
 
         updateRecipeList = true
         mainButtons.check(all.id)
-
 
         getCategories()
     }
@@ -55,42 +56,54 @@ class RecipeListActivity : ListActivity() {
     }
 
 
+    // Event handler for click on recipe
     override fun onListItemClick(listView: ListView, view: View, position: Int, id: Long) {
 
         val recipeId = view.tag
 
+        // Update popularity counter for the chosen recipe
         recipes.find { it.id == recipeId }?.updatePopularity()
+
+        // Go to recipe details page
         startActivity(intentFor<RecipeActivity>(C.recipeId to recipeId))
     }
 
 
+    // Create custom context menu when recipe is long pressed
     override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
-        super.onCreateContextMenu(menu, v, menuInfo)
 
         val inflate = menuInflater
         inflate.inflate(R.menu.context_menu, menu)
     }
 
 
+    // Event handler for long press on custom context menu
     override fun onContextItemSelected(item: MenuItem?): Boolean {
 
+        // Find recipe that was long pressed
         val info = item?.menuInfo as AdapterContextMenuInfo
-
         val recipe = list.getItemAtPosition(info.position) as Recipe
-        toast(recipe.name)
+
+        // Remove recipe from local list and db
+        recipes.remove(recipe)
+        deleteRecipe(recipe.id)
+
+        // Filter recipes based on selected radio button and update list view
+        filterRecipes()
 
         return true
     }
 
 
+    // Radio button event handler
     fun mainButtonClicked(view: View) {
 
+        // Filter recipes based on selected radio button and update list view
         filterRecipes()
-        listView.invalidateViews()
-
     }
 
 
+    // Filter recipes based on selected radio button and update list view
     fun filterRecipes() {
 
         val buttonChecked = mainButtons.checkedRadioButtonId
@@ -104,6 +117,7 @@ class RecipeListActivity : ListActivity() {
             else -> tempList = recipes.sortedBy { it.name }
         }
 
+        // Map data from tempList to list view
         listAdapter = RecipeAdapter(this@RecipeListActivity, tempList)
     }
 }

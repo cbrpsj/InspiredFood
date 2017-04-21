@@ -15,6 +15,10 @@
     <string name="recipe_info_person">person</string>
     <string name="recipe_info_persons">persons</string>
     <string name="ingredients">Ingredients</string>
+    <string name="ingredient">Ingredient</string>
+    <string name="ingredientError">Error! Ingredients has empty fields</string>
+    <string name="amount">Amount</string>
+    <string name="unit">Unit</string>
     <string name="preparation">Preparation</string>
     <string name="delete">Delete</string>
 </resources>

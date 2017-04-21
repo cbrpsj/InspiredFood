@@ -173,7 +173,7 @@ object CRUD {
 
 
     // READ List of recipes
-    fun getRecipes(): List<Recipe> {
+    fun getRecipes(): MutableList<Recipe> {
 
         var recipes: List<Recipe> = mutableListOf()
 
@@ -195,7 +195,7 @@ object CRUD {
                     .parseList(parser)
         }
 
-        return recipes
+        return recipes.toMutableList()
     }
 
 
@@ -301,6 +301,30 @@ object CRUD {
     }
 
 
+    // UPDATE Single recipe category
+    fun updateRecipeCategory(recipeId: Int, categoryId: Int) {
+
+        RecipeDBHelper.instance.use {
+
+            update( C.RecipesTable.tableName, C.RecipesTable.category to categoryId)
+                    .where("$recipeId = ${C.RecipesTable.tableName}.${C.RecipesTable.id}")
+                    .exec()
+        }
+    }
+
+
+    // UPDATE Single recipe category
+    fun updateNoOfPeople(recipeId: Int, noOfPeople: Int) {
+
+        RecipeDBHelper.instance.use {
+
+            update( C.RecipesTable.tableName, C.RecipesTable.numberOfPeople to noOfPeople)
+                    .where("$recipeId = ${C.RecipesTable.tableName}.${C.RecipesTable.id}")
+                    .exec()
+        }
+    }
+
+
     // UPDATE Single recipe preparation
     fun updatePreparation(recipeId: Int, preparation: String) {
 
@@ -317,6 +341,20 @@ object CRUD {
     /******** DELETE Operations: *********/
 
 
+    // DELETE Single recipe
+    fun deleteRecipe(recipeId: Int) {
+
+        deleteIngredientsInRecipe(recipeId)
+        deleteTimersInRecipe(recipeId)
+
+        RecipeDBHelper.instance.use {
+
+            delete( C.RecipesTable.tableName,
+                    "$recipeId = ${C.RecipesTable.tableName}.${C.RecipesTable.id}")
+        }
+    }
+
+
     // DELETE all ingredients in a specific recipe
     fun deleteIngredientsInRecipe(recipeId: Int) {
 
@@ -324,6 +362,17 @@ object CRUD {
 
             delete( C.IngredientsInRecipesTable.tableName,
                     "$recipeId = ${C.IngredientsInRecipesTable.tableName}.${C.IngredientsInRecipesTable.recipeId}")
+        }
+    }
+
+
+    // DELETE all timers in a specific recipe
+    fun deleteTimersInRecipe(recipeId: Int) {
+
+        RecipeDBHelper.instance.use {
+
+            delete( C.TimersTable.tableName,
+                    "$recipeId = ${C.TimersTable.tableName}.${C.TimersTable.recipeId}")
         }
     }
 }
