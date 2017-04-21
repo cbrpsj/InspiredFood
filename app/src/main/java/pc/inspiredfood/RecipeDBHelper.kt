@@ -4,7 +4,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import org.jetbrains.anko.db.*
 
-class RecipeDBHelper(context: Context = App.instance, version: Int = 18) :
+class RecipeDBHelper(context: Context = App.instance, version: Int = 1) :
         ManagedSQLiteOpenHelper(context, C.dbName, null, version) {
 
     companion object {

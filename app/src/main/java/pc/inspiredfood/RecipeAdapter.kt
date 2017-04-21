@@ -1,12 +1,10 @@
 package pc.inspiredfood
 
 import android.content.Context
-import android.database.Cursor
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.CursorAdapter
 import kotlinx.android.synthetic.main.item_recipe.view.*
 
 
@@ -27,7 +25,7 @@ class RecipeAdapter(context: Context, val recipes: List<Recipe>):
 
         // Set tag to id (first var in Pair), and display the recipeName in view (second var in Pair)
         view.tag = recipe.id
-        view.text_recipe_main.setText(recipe.name)
+        view.text_recipe_main.text = recipe.name
 
         // return the view
         return view

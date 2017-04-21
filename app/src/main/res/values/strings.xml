@@ -16,4 +16,5 @@
     <string name="recipe_info_persons">persons</string>
     <string name="ingredients">Ingredients</string>
     <string name="preparation">Preparation</string>
+    <string name="delete">Delete</string>
 </resources>
