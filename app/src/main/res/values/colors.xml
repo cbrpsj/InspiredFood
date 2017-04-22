@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorPrimary">#3F51B5</color>
     <color name="colorAccent">#FF4081</color>
+
     <color name="defaultBlack">#000000</color>
-    <color name="cellTextColor">#707070</color>
+    <color name="textColorListCellPreparation">#606060</color>
+    <color name="cellBorder">#999999</color>
+    <color name="hintTextColor">#AAAAAA</color>
     <color name="backgroundEditMode">#FFF0F0</color>
-    <color name="backgroundBlue">#E3E9FF</color>
+    <color name="white">#FFFFFF</color>
     <color name="backgroundWhite">#FAFAFA</color>
+    <color name="buttonBlue">#EEEEFF</color>
+    <color name="backgroundBlue">#E3E9FF</color>
 </resources>

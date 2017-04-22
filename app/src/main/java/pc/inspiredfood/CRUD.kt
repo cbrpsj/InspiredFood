@@ -247,7 +247,7 @@ object CRUD {
 
 
     // READ List of all ingredients in a specific recipe
-    fun getIngredientsInRecipe(recipeId: Int): List<Triple<String, Double, String>> {
+    fun getIngredientsInRecipe(recipeId: Int): MutableList<Triple<String, Double, String>> {
 
         var ingredientsInRecipe: List<Triple<String, Double, String>> = mutableListOf()
 
@@ -269,7 +269,7 @@ object CRUD {
                     })
         }
 
-        return ingredientsInRecipe
+        return ingredientsInRecipe.toMutableList()
     }
 
 

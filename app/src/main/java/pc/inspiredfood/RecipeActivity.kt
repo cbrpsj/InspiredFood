@@ -2,8 +2,11 @@ package pc.inspiredfood
 
 import android.app.Activity
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.os.Bundle
+import android.text.Html
 import android.text.InputType
+import android.util.Log
 import android.util.TypedValue
 import android.view.*
 import android.view.inputmethod.EditorInfo
@@ -36,16 +39,11 @@ class RecipeActivity : Activity() {
 
     var id = 0
     var editModeEnabled = false
-    var ingredientsInRecipe: List<Triple<String, Double, String>> = mutableListOf()
+    var ingredientsInRecipe = mutableListOf<Triple<String, Double, String>>()
 
     // Holds long pressed table row view
     lateinit var tableRowView: View
         private set
-
-    // Holds the default spinner background with arrow
-    lateinit var spinnerDefaultBackground: Drawable
-        private set
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -54,7 +52,6 @@ class RecipeActivity : Activity() {
 
         // Set id to Int sent in intent from previous activity
         id = intent.getIntExtra(C.recipeId, -1)
-        spinnerDefaultBackground = spinner.background
 
         setupInfoLine()
         getRecipeDetails()
@@ -92,7 +89,6 @@ class RecipeActivity : Activity() {
     fun getRecipeDetails() {
 
         ingredientsInRecipe = getIngredientsInRecipe(id)
-
         recipe_name.setText(getRecipeName(id))
         recipe_preparation.setText(getPreparation(id))
 
@@ -110,7 +106,7 @@ class RecipeActivity : Activity() {
 
         // Set padding and border for table row
         tableRow.setPadding(dpToPixel(5f), dpToPixel(5f), dpToPixel(7f), dpToPixel(5f))
-        tableRow.background = getDrawable(R.drawable.cell)
+        tableRow.background = getDrawable(R.drawable.cell_border_and_background)
         registerForContextMenu(tableRow)
 
         // Set weight (used in ingredient text view). Ensure space between ingredient and amount
@@ -126,36 +122,28 @@ class RecipeActivity : Activity() {
         editTextViewIngredient.setAdapter(autoCompleteAdapterIngredient)
 
         val autoCompleteAdapterUnit = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, units.toList())
-        editTextViewIngredient.setAdapter(autoCompleteAdapterUnit)
+        editTextViewUnit.setAdapter(autoCompleteAdapterUnit)
 
-
-        // Apply weight to ingredient EditText view
+        // Apply weight to ingredient EditText view and minimum width for unit
         editTextViewIngredient.layoutParams = layoutParams
-
-        // Align text in amount EditText view to the right
-        editTextViewAmount.gravity = Gravity.END
+        editTextViewUnit.minimumWidth = dpToPixel(55f)
 
         // Set attributes for all three EditText views in the table row
         setEditTextViewAttributes(editTextViewIngredient, 0, 0, 0, 0)
         setEditTextViewAttributes(editTextViewAmount, dpToPixel(15f), 0, dpToPixel(10f), 0)
         setEditTextViewAttributes(editTextViewUnit, 0, 0, 0, 0)
 
-        // Allow only decimal numbers in EditText view amount
-        editTextViewAmount.inputType = InputType.TYPE_CLASS_NUMBER.or(InputType.TYPE_NUMBER_FLAG_DECIMAL)
+        // Set hints and hint text style
+        setEditTextViewHint(editTextViewIngredient, getString(R.string.ingredient))
+        setEditTextViewHint(editTextViewAmount, getString(R.string.amount))
+        setEditTextViewHint(editTextViewUnit, getString(R.string.unit))
 
+        // When ingredient line is not null, map data from ingredient line to table row
         if (ingredientLine != null) {
 
-            // Map data from ingredient line to table row
             editTextViewIngredient.setText(ingredientLine.first)
             editTextViewAmount.setText(formatAmount(ingredientLine.second))
             editTextViewUnit.setText(ingredientLine.third)
-        }
-        else {
-
-            // When ingredient line is empty set hints
-            editTextViewIngredient.hint = getString(R.string.ingredient)
-            editTextViewAmount.hint = getString(R.string.amount)
-            editTextViewUnit.hint = getString(R.string.unit)
         }
 
         // Add EditText views to table row, and add table row to table layout
@@ -173,9 +161,34 @@ class RecipeActivity : Activity() {
         editTextView.background = null
 
         editTextView.setPadding(left, top, right, bottom)
-        editTextView.textColor = R.color.cellTextColor
+        editTextView.textColor = getColor(R.color.textColorListCellPreparation)
+        editTextView.hintTextColor = getColor(R.color.hintTextColor)
+        editTextView.maxLines = 1
         editTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 17f)
         editTextView.setOnKeyListener { v, keyCode, event -> removeEmptyIngredientRowWhenNeeded(); createEmptyIngredientRowWhenNeeded() }
+
+        if (editTextView is AutoCompleteTextView) {
+
+            editTextView.inputType = InputType.TYPE_TEXT_VARIATION_PHONETIC // To avoid spelling check
+            editTextView.gravity = Gravity.CENTER_VERTICAL
+            editTextView.threshold = 1 // Number of characters to enter before autocomplete activates
+        }
+        else {
+            // Edit text view is then for amount
+            editTextView.inputType = InputType.TYPE_CLASS_NUMBER.or(InputType.TYPE_NUMBER_FLAG_DECIMAL)
+            editTextView.gravity = Gravity.CENTER.or(Gravity.END)
+        }
+    }
+
+
+    // Set hint text and hint text style for EditText view
+    fun setEditTextViewHint(editTextView: EditText, hintText: String) {
+
+        // When build version is nougat (SDK version 24) or older use new implementation
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+            editTextView.hint = Html.fromHtml("<small><i>$hintText</i></small>", Html.FROM_HTML_MODE_COMPACT)
+        else
+            editTextView.hint = Html.fromHtml("<small><i>$hintText</i></small>")
     }
 
 
@@ -215,12 +228,13 @@ class RecipeActivity : Activity() {
         updatePersonTextAndIngredientAmounts(noOfPeople, true)
 
         editModeEnabled = true
-        button_edit_save.setText("${getString(R.string.save)}")
+        button_edit_save.text = getString(R.string.save)
         recipe_detail.backgroundColor = resources.getColor(R.color.backgroundEditMode, null)
 
         // Create empty table row at bottom of ingredient table for new ingredient
         createTableRow(null)
 
+        setupSpinner()
         makeViewsEditable()
     }
 
@@ -235,6 +249,8 @@ class RecipeActivity : Activity() {
         editModeEnabled = false
         button_edit_save.text = getString(R.string.edit)
         recipe_detail.backgroundColor = resources.getColor(R.color.backgroundWhite, null)
+
+        setupInfoLine()
         makeViewsUneditable()
         hideKeyboard()
     }
@@ -244,9 +260,8 @@ class RecipeActivity : Activity() {
     fun makeViewsEditable() {
 
         makeViewEditable(recipe_name)
-        spinner.isEnabled = true
-        spinner.background = spinnerDefaultBackground
         makeViewEditable(recipe_preparation)
+        spinner.isEnabled = true
 
         // Find all table rows in table layout
         val tableRows = ingredients_table.childrenSequence()
@@ -263,9 +278,8 @@ class RecipeActivity : Activity() {
     fun makeViewsUneditable() {
 
         makeViewUneditable(recipe_name)
-        spinner.isEnabled = false
-        spinner.background = getDrawable(R.drawable.spinner)
         makeViewUneditable(recipe_preparation)
+        spinner.isEnabled = false
 
         // Find all table rows in table layout
         val tableRows = ingredients_table.childrenSequence()
@@ -302,7 +316,7 @@ class RecipeActivity : Activity() {
     fun saveRecipe(): Boolean {
 
         // Find all table rows in table layout
-        val tableRows = ingredients_table.childrenSequence()
+        var tableRows = ingredients_table.childrenSequence()
 
         for ((index, tableRow) in tableRows.withIndex()) {
 
@@ -321,10 +335,13 @@ class RecipeActivity : Activity() {
         }
 
         // Remove last ingredient line when all fields are empty
-        if (countEmptyFieldsInIngredientRow(ingredients_table.childCount-1) == 3)
-            ingredients_table.removeViewAt(ingredients_table.childCount-1)
+        if (countEmptyFieldsInIngredientRow(ingredients_table.childCount-1) == 3) {
 
-        val ingredientsInRecipe = mutableListOf<Triple<Int, Double, Int>>()
+            ingredients_table.removeViewAt(ingredients_table.childCount - 1)
+            tableRows = ingredients_table.childrenSequence()
+        }
+
+        val tmpIngredientsInRecipe = mutableListOf<Triple<Int, Double, Int>>()
 
         // Get ingredients in the table
         for(tableRow in tableRows) {
@@ -346,7 +363,7 @@ class RecipeActivity : Activity() {
             val unitId = getUnitId(unitName)
 
             // Add ingredient to list of ingredients in recipe
-            ingredientsInRecipe.add(Triple(ingredientId, amount, unitId))
+            tmpIngredientsInRecipe.add(Triple(ingredientId, amount, unitId))
         }
 
         // Update recipe name, category, no of people and preparation in DB
@@ -357,7 +374,9 @@ class RecipeActivity : Activity() {
 
         // Delete all previous ingredients in recipe, afterwards add all ingredients from UI to DB
         deleteIngredientsInRecipe(id)
-        createIngredientsInRecipe(id, ingredientsInRecipe)
+        createIngredientsInRecipe(id, tmpIngredientsInRecipe)
+
+        ingredientsInRecipe = getIngredientsInRecipe(id)
 
         updateRecipeList = true
         return true
@@ -390,63 +409,63 @@ class RecipeActivity : Activity() {
     }
 
 
-    // Display recipe category and number of people
-    fun setupInfoLine() {
-
-        // Spinner (Dropdown):
+    // Setup spinner (dropdown) based on state of edit mode
+    fun setupSpinner() {
 
         // Find localised category names
         val localised_categories = listOf<String>(getString(R.string.starter), getString(R.string.main), getString(R.string.dessert))
 
-        // Create arrayAdapter with custom spinner_popup.xml
-        val spinnerAdapter = ArrayAdapter(this, R.layout.spinner, localised_categories)
+        // Create arrayAdapter with custom default spinner
+        var spinnerAdapter = ArrayAdapter(this, R.layout.spinner_default, localised_categories)
+        spinner.background = getDrawable(R.drawable.spinner_default_background)
+
+        // When edit mode enabled, set spinner to custom edit layout
+        if (editModeEnabled) {
+            spinnerAdapter = ArrayAdapter(this, R.layout.spinner_edit, localised_categories)
+            spinner.background = getDrawable(R.drawable.spinner_edit_background)
+        }
 
         // Set custom spinner popup
         spinnerAdapter.setDropDownViewResource(R.layout.spinner_popup)
 
         spinner.adapter = spinnerAdapter
         spinner.setSelection(findRecipeCategory())
-
-        // Set event listener for selected item in dropdown
-        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-
-            }
-        }
+    }
 
 
-        // Number of persons EditText (Numbers only):
+    // Display recipe category and number of people
+    fun setupInfoLine() {
+
+        setupSpinner()
 
         // Find number of people for this recipe and display in UI
         val noOfPeople = getNoOfPeople(id)
+
         no_of_persons.setText(noOfPeople.toString())
 
         // Listen for click on Done button on soft keyboard
         no_of_persons.setOnEditorActionListener { v, actionId, event ->
+
             if (actionId == EditorInfo.IME_ACTION_DONE) {
+
                 hideKeyboard()
                 no_of_persons.clearFocus()
                 updatePersonTextAndIngredientAmounts(noOfPeople, false)
                 true
             }
+
             else false
         }
 
         // Listen for change of focus away from EditText
         no_of_persons.setOnFocusChangeListener { v, hasFocus ->
+
             if (!hasFocus) {
+
                 hideKeyboard()
                 updatePersonTextAndIngredientAmounts(noOfPeople, false)
             }
         }
-
-
-        // Person EditText:
 
         person_text.text =  if (noOfPeople < 2) getString(R.string.recipe_info_person)
                             else getString(R.string.recipe_info_persons)
@@ -482,8 +501,8 @@ class RecipeActivity : Activity() {
         // Get the EditText field for amount and display the updated ingredient amount for each tableRow
         for(tableRow in tableRows) {
 
-            val ingredientView = (tableRow as TableRow).getChildAt(1) as EditText
-            ingredientView.setText(calculateAmount(noOfPeople, newNoOfPeopleInt, ingredientsInRecipe[index++].second))
+            val amountView = (tableRow as TableRow).getChildAt(1) as EditText
+            amountView.setText(calculateAmount(noOfPeople, newNoOfPeopleInt, ingredientsInRecipe[index++].second))
         }
     }
 
