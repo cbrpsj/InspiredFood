@@ -11,6 +11,7 @@ import android.widget.ListView
 import kotlinx.android.synthetic.main.activity_recipe_list.*
 import org.jetbrains.anko.contentView
 import org.jetbrains.anko.intentFor
+import org.jetbrains.anko.onClick
 import org.jetbrains.anko.toast
 import pc.inspiredfood.App.Companion.updateRecipeList
 import pc.inspiredfood.CRUD.deleteRecipe
@@ -36,6 +37,8 @@ class RecipeListActivity : ListActivity() {
         mainButtons.check(all.id)
 
         getCategories()
+
+        button_add.onClick { addRecipe() }
     }
 
 
@@ -100,6 +103,14 @@ class RecipeListActivity : ListActivity() {
 
         // Filter recipes based on selected radio button and update list view
         filterRecipes()
+    }
+
+
+    // Add new recipe
+    fun addRecipe() {
+
+        // Go to empty recipe details page
+        startActivity(intentFor<RecipeActivity>())
     }
 
 

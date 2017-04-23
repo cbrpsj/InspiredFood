@@ -14,6 +14,22 @@ object CRUD {
 
     /********* CREATE Operations: ********/
 
+    // CREATE Single recipe
+    fun createEmptyRecipe(): Int {
+
+        var id = 0
+
+        RecipeDBHelper.instance.use {
+
+            insert(C.RecipesTable.tableName)
+
+            select( C.RecipesTable.tableName, C.RecipesTable.id)
+                    .where("${C.RecipesTable.tableName}.${C.RecipesTable.id} == max(${C.RecipesTable.tableName}.${C.RecipesTable.id}")
+                    .parseSingle( rowParser { recipeId: Int -> id = recipeId })
+        }
+
+        return id
+    }
 
     // CREATE Single ingredient
     fun createIngredient(ingredient: String) {
@@ -159,13 +175,13 @@ object CRUD {
     // READ Single number of people
     fun getNoOfPeople(recipeId: Int): Int {
 
-        var noOfPeople = 0
+        var noOfPeople = 2 // Default value
 
         RecipeDBHelper.instance.use {
 
             select(C.RecipesTable.tableName, C.RecipesTable.numberOfPeople)
                     .where( "$recipeId = ${C.RecipesTable.tableName}.${C.RecipesTable.id}")
-                    .parseSingle( rowParser { no: Int -> noOfPeople = no })
+                    .parseOpt( rowParser { no: Int -> noOfPeople = no })
         }
 
         return noOfPeople

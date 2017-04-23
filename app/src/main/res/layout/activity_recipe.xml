@@ -48,6 +48,7 @@
                 android:inputType="textPhonetic"
                 android:textColor="@color/defaultBlack"
                 android:textSize="30sp"
+                android:hint="@string/hint_recipe_name"
                 android:background="@null"/>
 
             <LinearLayout
@@ -136,6 +137,9 @@
                 android:paddingBottom="5dp"
                 android:textColor="@color/textColorListCellPreparation"
                 android:textSize="17sp"
+                android:inputType="textPhonetic"
+                android:hint="@string/hint_preparations"
+                android:textColorHint="@color/hintTextColor"
                 android:background="@drawable/cell_border_and_background"/>
 
         </LinearLayout>

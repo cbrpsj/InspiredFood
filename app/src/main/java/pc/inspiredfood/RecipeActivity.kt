@@ -50,12 +50,23 @@ class RecipeActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_recipe)
 
-        // Set id to Int sent in intent from previous activity
+        // Set id to Int sent in intent from previous activity or -1 for new recipe
         id = intent.getIntExtra(C.recipeId, -1)
 
-        setupInfoLine()
-        getRecipeDetails()
-        makeViewsUneditable()       // Default setting
+        // New empty recipe starts in edit mode
+        if (id == -1) {
+
+            editModeEnabled = true
+            enterEditMode()
+            return
+        }
+        // Existing recipe starts in read-only mode
+        else {
+
+            setupInfoLine()
+            getRecipeDetails()
+            makeViewsUneditable()
+        }
 
         // Set event listener for edit/save button
         button_edit_save.onClick { toggleEditMode() }
@@ -129,9 +140,9 @@ class RecipeActivity : Activity() {
         editTextViewUnit.minimumWidth = dpToPixel(55f)
 
         // Set attributes, hints and hint text style for all three EditText views in the table row
-        setEditTextViewAttributes(editTextViewIngredient, 0, 0, 0, 0, getString(R.string.ingredient))
-        setEditTextViewAttributes(editTextViewAmount, dpToPixel(15f), 0, dpToPixel(10f), 0, getString(R.string.amount))
-        setEditTextViewAttributes(editTextViewUnit, 0, 0, 0, 0, getString(R.string.unit))
+        setEditTextViewAttributes(editTextViewIngredient, 0, 0, 0, 0, getString(R.string.hint_ingredient))
+        setEditTextViewAttributes(editTextViewAmount, dpToPixel(15f), 0, dpToPixel(10f), 0, getString(R.string.hint_amount))
+        setEditTextViewAttributes(editTextViewUnit, 0, 0, 0, 0, getString(R.string.hint_unit))
 
         // When ingredient line is not null, map data from ingredient line to table row
         if (ingredientLine != null) {
@@ -186,12 +197,14 @@ class RecipeActivity : Activity() {
         for ((index, tableRow) in tableRows.withIndex()) {
 
             if (countEmptyFieldsInIngredientRow(index) == 3 && index != tableRows.count()-1) {
+
                 indexOfTableRowToRemove = index
                 break
             }
         }
 
         if (indexOfTableRowToRemove != null) {
+
             ingredients_table.removeViewAt(indexOfTableRowToRemove)
             hideKeyboard()
         }
@@ -253,6 +266,7 @@ class RecipeActivity : Activity() {
         val tableRows = ingredients_table.childrenSequence()
 
         for(tableRow in tableRows) {
+
             makeViewEditable((tableRow as TableRow).getChildAt(0) as EditText)
             makeViewEditable(tableRow.getChildAt(1) as EditText)
             makeViewEditable(tableRow.getChildAt(2) as EditText)
@@ -271,6 +285,7 @@ class RecipeActivity : Activity() {
         val tableRows = ingredients_table.childrenSequence()
 
         for(tableRow in tableRows) {
+
             makeViewUneditable((tableRow as TableRow).getChildAt(0) as EditText)
             makeViewUneditable(tableRow.getChildAt(1) as EditText)
             makeViewUneditable(tableRow.getChildAt(2) as EditText)
@@ -312,16 +327,16 @@ class RecipeActivity : Activity() {
             // If any ingredient fields (except the last row) are empty, display error message and abort save
             if (emptyFields > 0) {
 
-                if (index == ingredients_table.childCount-1 && emptyFields == 3)
+                if (index == ingredients_table.childCount - 1 && emptyFields == 3)
                     continue
 
-                longToast(getString(R.string.ingredientError).toString())
+                longToast(getString(R.string.ingredient_error).toString())
                 return false
             }
         }
 
         // Remove last ingredient line when all fields are empty
-        if (countEmptyFieldsInIngredientRow(ingredients_table.childCount-1) == 3) {
+        if (countEmptyFieldsInIngredientRow(ingredients_table.childCount - 1) == 3) {
 
             ingredients_table.removeViewAt(ingredients_table.childCount - 1)
             tableRows = ingredients_table.childrenSequence()
@@ -354,7 +369,7 @@ class RecipeActivity : Activity() {
 
         // Update recipe name, category, no of people and preparation in DB
         updateRecipeName(id, recipe_name.text.toString())
-        updateRecipeCategory(id, spinner.selectedItemPosition +1)
+        updateRecipeCategory(id, spinner.selectedItemPosition + 1)
         updateNoOfPeople(id, no_of_persons.text.toString().toInt())
         updatePreparation(id, recipe_preparation.text.toString())
 
@@ -454,7 +469,7 @@ class RecipeActivity : Activity() {
         }
 
         person_text.text =  if (noOfPeople < 2) getString(R.string.recipe_info_person)
-                            else getString(R.string.recipe_info_persons)
+        else getString(R.string.recipe_info_persons)
     }
 
 
@@ -495,8 +510,9 @@ class RecipeActivity : Activity() {
 
     fun findRecipeCategory(): Int {
 
-        for (i in categories.indices)
-            if (getRecipeCategory(id) == categories[i]) return i
+        if (id != -1)
+            for (i in categories.indices)
+                if (getRecipeCategory(id) == categories[i]) return i
 
         return 1 // default main course - can be used for new recipes
     }
@@ -526,11 +542,11 @@ class RecipeActivity : Activity() {
     fun dpToPixel(dp: Float) = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.displayMetrics).toInt()
 
 
-    // Get category in the correct language
-    fun translateCategory(categoryName: String): String =
-            when(categoryName){
-                "Starter" -> getString(R.string.starter)
-                "Main"    -> getString(R.string.main)
-                else      -> getString(R.string.dessert)
-            }
+//    // Get category in the correct language
+//    fun translateCategory(categoryName: String): String =
+//            when(categoryName){
+//                "Starter" -> getString(R.string.starter)
+//                "Main"    -> getString(R.string.main)
+//                else      -> getString(R.string.dessert)
+//            }
 }

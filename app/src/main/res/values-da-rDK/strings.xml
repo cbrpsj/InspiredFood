@@ -14,10 +14,12 @@
     <string name="recipe_info_person">person</string>
     <string name="recipe_info_persons">personer</string>
     <string name="ingredients">Ingredienser</string>
-    <string name="ingredient">Ingrediens</string>
-    <string name="ingredientError">Fejl! Ingredienser har tomme felter</string>
-    <string name="amount">Mængde</string>
-    <string name="unit">Enhed</string>
+    <string name="hint_ingredient">Ingrediens</string>
+    <string name="ingredient_error">Fejl! Ingredienser har tomme felter</string>
+    <string name="hint_recipe_name"><small><i>Opskriftnavn</i></small></string>
+    <string name="hint_amount">Mængde</string>
+    <string name="hint_unit">Enhed</string>
+    <string name="hint_preparations"><small><i>Tilberedning</i></small></string>
     <string name="preparation">Tilberedning</string>
     <string name="delete">Slet</string>
 </resources>

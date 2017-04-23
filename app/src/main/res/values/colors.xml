@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Android default theme colors -->
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorAccent">#FF4081</color>
 
+    <!-- Custom colors -->
     <color name="defaultBlack">#000000</color>
     <color name="textColorListCellPreparation">#606060</color>
     <color name="cellBorder">#999999</color>
