@@ -17,18 +17,14 @@ object CRUD {
     // CREATE Single recipe
     fun createEmptyRecipe(): Int {
 
-        var id = 0
-
         RecipeDBHelper.instance.use {
 
             insert(C.RecipesTable.tableName)
-
-            select( C.RecipesTable.tableName, C.RecipesTable.id)
-                    .where("${C.RecipesTable.tableName}.${C.RecipesTable.id} == max(${C.RecipesTable.tableName}.${C.RecipesTable.id}")
-                    .parseSingle( rowParser { recipeId: Int -> id = recipeId })
         }
 
-        return id
+        val recipe = getRecipes().findLast { true }
+
+        return recipe?.id ?: 0
     }
 
     // CREATE Single ingredient
@@ -207,7 +203,7 @@ object CRUD {
             recipes = select(C.RecipesTable.tableName,
                     C.RecipesTable.id, C.RecipesTable.recipeName,
                     C.RecipesTable.category, C.RecipesTable.popularity)
-                    .orderBy(C.RecipesTable.recipeName)
+                    .orderBy(C.RecipesTable.id)
                     .parseList(parser)
         }
 

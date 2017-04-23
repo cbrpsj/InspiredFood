@@ -18,6 +18,7 @@ import pc.inspiredfood.App.Companion.categories
 import pc.inspiredfood.App.Companion.ingredients
 import pc.inspiredfood.App.Companion.units
 import pc.inspiredfood.App.Companion.updateRecipeList
+import pc.inspiredfood.CRUD.createEmptyRecipe
 import pc.inspiredfood.CRUD.createIngredient
 import pc.inspiredfood.CRUD.createIngredientsInRecipe
 import pc.inspiredfood.CRUD.createUnit
@@ -58,7 +59,6 @@ class RecipeActivity : Activity() {
 
             editModeEnabled = true
             enterEditMode()
-            return
         }
         // Existing recipe starts in read-only mode
         else {
@@ -315,6 +315,13 @@ class RecipeActivity : Activity() {
 
     // Save all fields in the recipe to the DB
     fun saveRecipe(): Boolean {
+
+        toast("Hello")
+
+        if (id == -1)
+            id = createEmptyRecipe()
+
+        toast(id.toString())
 
         // Find all table rows in table layout
         var tableRows = ingredients_table.childrenSequence()

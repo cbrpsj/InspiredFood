@@ -114,18 +114,17 @@ class RecipeListActivity : ListActivity() {
     }
 
 
-    // Filter recipes based on selected radio button and update list view
+    // Filter recipes (sorted alphabetically) based on selected radio button and update list view
     fun filterRecipes() {
 
         val buttonChecked = mainButtons.checkedRadioButtonId
-        val tempList: List<Recipe>
+        val tempList = recipes.sortedBy { it.name }
 
         when(buttonChecked) {
-            starters.id -> tempList = recipes.filter { it.category == 1 }
-            mains.id -> tempList = recipes.filter { it.category == 2 }
-            desserts.id -> tempList = recipes.filter { it.category == 3 }
-            favourites.id -> tempList = recipes.sortedByDescending { it.popularity }
-            else -> tempList = recipes.sortedBy { it.name }
+            starters.id -> tempList.filter { it.category == 1 }
+            mains.id -> tempList.filter { it.category == 2 }
+            desserts.id -> tempList.filter { it.category == 3 }
+            favourites.id -> tempList.sortedByDescending { it.popularity }
         }
 
         // Map data from tempList to list view
