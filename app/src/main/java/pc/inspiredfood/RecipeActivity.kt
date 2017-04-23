@@ -112,7 +112,6 @@ class RecipeActivity : Activity() {
 
         for (timer in timers)
             toast("Name: ${timer.first} - Time: ${timer.second}")
-
     }
 
 
@@ -237,6 +236,8 @@ class RecipeActivity : Activity() {
         editModeEnabled = true
         button_edit_save.text = getString(R.string.save)
         recipe_detail.backgroundColor = resources.getColor(R.color.backgroundEditMode, null)
+        recipe_name.background = getDrawable(R.drawable.edit_text_edit_mode_background)
+        no_of_persons.clearFocus()
 
         // Create empty table row at bottom of ingredient table for new ingredient
         createTableRow(null)
@@ -256,6 +257,8 @@ class RecipeActivity : Activity() {
         editModeEnabled = false
         button_edit_save.text = getString(R.string.edit)
         recipe_detail.backgroundColor = resources.getColor(R.color.backgroundWhite, null)
+        recipe_name.background = getDrawable(R.drawable.edit_text_default_background)
+        no_of_persons.clearFocus()
 
         setupInfoLine()
         makeViewsUneditable()

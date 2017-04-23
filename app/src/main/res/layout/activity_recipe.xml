@@ -42,15 +42,15 @@
                 android:id="@+id/recipe_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingTop="5dp"
                 android:layout_gravity="center"
+                android:gravity="center"
                 android:inputType="textPhonetic"
                 android:textColor="@color/defaultBlack"
                 android:textSize="30sp"
                 android:maxLength="25"
                 android:maxLines="1"
                 android:hint="@string/hint_recipe_name"
-                android:background="@null"/>
+                android:background="@drawable/edit_text_default_background"/>
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -63,7 +63,7 @@
                 <Spinner
                     android:id="@+id/spinner"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -87,7 +87,8 @@
                     android:textSize="15sp"
                     android:textStyle="italic"
                     android:textAlignment="center"
-                    android:textColor="@color/defaultBlack"/>
+                    android:textColor="@color/defaultBlack"
+                    android:background="@drawable/edit_text_edit_mode_background"/>
 
                 <TextView
                     android:id="@+id/person_text"
