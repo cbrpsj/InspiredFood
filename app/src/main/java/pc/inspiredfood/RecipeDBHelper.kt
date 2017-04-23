@@ -33,6 +33,7 @@ class RecipeDBHelper(context: Context = App.instance, version: Int = 1) :
 
         db.createTable(C.TimersTable.tableName, true,
                 C.TimersTable.id to INTEGER + PRIMARY_KEY + UNIQUE,
+                C.TimersTable.timerName to TEXT,
                 C.TimersTable.minutes to INTEGER,
                 C.TimersTable.recipeId to INTEGER,
                 "" to FOREIGN_KEY(C.TimersTable.recipeId, C.RecipesTable.tableName, C.RecipesTable.id)

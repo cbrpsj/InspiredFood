@@ -44,10 +44,11 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="5dp"
                 android:layout_gravity="center"
-                android:maxLines="1"
                 android:inputType="textPhonetic"
                 android:textColor="@color/defaultBlack"
                 android:textSize="30sp"
+                android:maxLength="25"
+                android:maxLines="1"
                 android:hint="@string/hint_recipe_name"
                 android:background="@null"/>
 
@@ -137,10 +138,30 @@
                 android:paddingBottom="5dp"
                 android:textColor="@color/textColorListCellPreparation"
                 android:textSize="17sp"
-                android:inputType="textPhonetic"
+                android:maxLength="10000"
+                android:inputType="textPhonetic|textMultiLine"
                 android:hint="@string/hint_preparations"
                 android:textColorHint="@color/hintTextColor"
                 android:background="@drawable/cell_border_and_background"/>
+
+            <TextView
+                android:id="@+id/recipe_timer_headline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="30dp"
+                android:paddingBottom="5dp"
+                android:textColor="@color/defaultBlack"
+                android:textSize="20sp"
+                android:text="@string/timers"/>
+
+            <TableLayout
+                android:id="@+id/timers_table"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="5dp"
+                android:focusableInTouchMode="true"
+                android:clickable="true">
+            </TableLayout>
 
         </LinearLayout>
 

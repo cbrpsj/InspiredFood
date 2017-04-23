@@ -118,13 +118,16 @@ class RecipeListActivity : ListActivity() {
     fun filterRecipes() {
 
         val buttonChecked = mainButtons.checkedRadioButtonId
-        val tempList = recipes.sortedBy { it.name }
+        recipes.sortBy { it.name }
+
+        val tempList: List<Recipe>
 
         when(buttonChecked) {
-            starters.id -> tempList.filter { it.category == 1 }
-            mains.id -> tempList.filter { it.category == 2 }
-            desserts.id -> tempList.filter { it.category == 3 }
-            favourites.id -> tempList.sortedByDescending { it.popularity }
+            starters.id -> tempList = recipes.filter { it.category == 1 }
+            mains.id -> tempList = recipes.filter { it.category == 2 }
+            desserts.id -> tempList = recipes.filter { it.category == 3 }
+            favourites.id -> tempList = recipes.sortedByDescending { it.popularity }
+            else -> tempList = recipes
         }
 
         // Map data from tempList to list view

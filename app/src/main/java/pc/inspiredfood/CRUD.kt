@@ -19,7 +19,13 @@ object CRUD {
 
         RecipeDBHelper.instance.use {
 
-            insert(C.RecipesTable.tableName)
+            insert( C.RecipesTable.tableName,
+                    C.RecipesTable.recipeName to "",
+                    C.RecipesTable.category to 1,
+                    C.RecipesTable.preparation to "",
+                    C.RecipesTable.popularity to 0,
+                    C.RecipesTable.numberOfPeople to 2
+            )
         }
 
         val recipe = getRecipes().findLast { true }
@@ -62,6 +68,19 @@ object CRUD {
 
         // Add new unit to hashSet
         units.add(unit)
+    }
+
+
+    // CREATE Single timer
+    fun createTimer(recipeId: Int, timerName: String, minutes: Int) {
+
+        RecipeDBHelper.instance.use {
+
+            insert(C.TimersTable.tableName,
+                    C.TimersTable.recipeId to recipeId,
+                    C.TimersTable.timerName to timerName,
+                    C.TimersTable.minutes to minutes)
+        }
     }
 
 
@@ -284,6 +303,23 @@ object CRUD {
         return ingredientsInRecipe.toMutableList()
     }
 
+
+    // READ List of recipe timers
+    fun getRecipeTimers(recipeId: Int): List<Pair<String, Int>> {
+
+        var timers: List<Pair<String, Int>> = mutableListOf()
+
+        RecipeDBHelper.instance.use {
+
+            timers = select(
+                    C.TimersTable.tableName,
+                    C.TimersTable.timerName, C.TimersTable.minutes)
+                    .where("$recipeId = ${C.TimersTable.tableName}.${C.TimersTable.recipeId}")
+                    .parseList(rowParser { name: String, mins: Int -> Pair(name, mins) })
+        }
+
+        return timers
+    }
 
 
     /********* UPDATE Operations: *********/

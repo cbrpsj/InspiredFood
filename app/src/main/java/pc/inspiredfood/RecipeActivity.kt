@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.text.Html
+import android.text.InputFilter
 import android.text.InputType
 import android.util.Log
 import android.util.TypedValue
@@ -29,6 +30,7 @@ import pc.inspiredfood.CRUD.getIngredientsInRecipe
 import pc.inspiredfood.CRUD.getNoOfPeople
 import pc.inspiredfood.CRUD.getRecipeCategory
 import pc.inspiredfood.CRUD.getRecipeName
+import pc.inspiredfood.CRUD.getRecipeTimers
 import pc.inspiredfood.CRUD.getUnitId
 import pc.inspiredfood.CRUD.updateNoOfPeople
 import pc.inspiredfood.CRUD.updatePreparation
@@ -105,6 +107,12 @@ class RecipeActivity : Activity() {
 
         for(ingredientLine in ingredientsInRecipe)
             createTableRow(ingredientLine)
+
+        val timers = getRecipeTimers(id)
+
+        for (timer in timers)
+            toast("Name: ${timer.first} - Time: ${timer.second}")
+
     }
 
 
@@ -196,7 +204,7 @@ class RecipeActivity : Activity() {
 
         for ((index, tableRow) in tableRows.withIndex()) {
 
-            if (countEmptyFieldsInIngredientRow(index) == 3 && index != tableRows.count()-1) {
+            if (countEmptyFieldsInIngredientRow(index) == 3 && index != tableRows.count() - 1) {
 
                 indexOfTableRowToRemove = index
                 break
@@ -316,12 +324,15 @@ class RecipeActivity : Activity() {
     // Save all fields in the recipe to the DB
     fun saveRecipe(): Boolean {
 
-        toast("Hello")
+        // If recipe name is empty, display error message and abort save
+        if (recipe_name.text.toString().isEmpty()) {
+
+            longToast(getString(R.string.recipe_name_error).toString())
+            return false
+        }
 
         if (id == -1)
             id = createEmptyRecipe()
-
-        toast(id.toString())
 
         // Find all table rows in table layout
         var tableRows = ingredients_table.childrenSequence()
@@ -407,7 +418,7 @@ class RecipeActivity : Activity() {
     // When all fields in last table row are filled out, create new empty row
     fun createEmptyIngredientRowWhenNeeded(): Boolean {
 
-        if (editModeEnabled && countEmptyFieldsInIngredientRow(ingredients_table.childCount-1) == 0) {
+        if (editModeEnabled && countEmptyFieldsInIngredientRow(ingredients_table.childCount - 1) == 0) {
 
             createTableRow(null)
             return true
@@ -547,13 +558,4 @@ class RecipeActivity : Activity() {
 
     // Convert DP to Pixel
     fun dpToPixel(dp: Float) = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.displayMetrics).toInt()
-
-
-//    // Get category in the correct language
-//    fun translateCategory(categoryName: String): String =
-//            when(categoryName){
-//                "Starter" -> getString(R.string.starter)
-//                "Main"    -> getString(R.string.main)
-//                else      -> getString(R.string.dessert)
-//            }
 }

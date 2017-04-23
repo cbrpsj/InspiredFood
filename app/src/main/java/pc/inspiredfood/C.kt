@@ -25,6 +25,7 @@ object C {
     object TimersTable {
         val tableName = "TIMERS"
         val id = "_id"
+        val timerName = "timer_name"
         val minutes = "minutes"
         val recipeId = "recipe_id"
     }
