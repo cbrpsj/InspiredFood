@@ -128,15 +128,10 @@ class RecipeActivity : Activity() {
         editTextViewIngredient.layoutParams = layoutParams
         editTextViewUnit.minimumWidth = dpToPixel(55f)
 
-        // Set attributes for all three EditText views in the table row
-        setEditTextViewAttributes(editTextViewIngredient, 0, 0, 0, 0)
-        setEditTextViewAttributes(editTextViewAmount, dpToPixel(15f), 0, dpToPixel(10f), 0)
-        setEditTextViewAttributes(editTextViewUnit, 0, 0, 0, 0)
-
-        // Set hints and hint text style
-        setEditTextViewHint(editTextViewIngredient, getString(R.string.ingredient))
-        setEditTextViewHint(editTextViewAmount, getString(R.string.amount))
-        setEditTextViewHint(editTextViewUnit, getString(R.string.unit))
+        // Set attributes, hints and hint text style for all three EditText views in the table row
+        setEditTextViewAttributes(editTextViewIngredient, 0, 0, 0, 0, getString(R.string.ingredient))
+        setEditTextViewAttributes(editTextViewAmount, dpToPixel(15f), 0, dpToPixel(10f), 0, getString(R.string.amount))
+        setEditTextViewAttributes(editTextViewUnit, 0, 0, 0, 0, getString(R.string.unit))
 
         // When ingredient line is not null, map data from ingredient line to table row
         if (ingredientLine != null) {
@@ -155,7 +150,7 @@ class RecipeActivity : Activity() {
 
 
     // Set attributes and event listener to an EditText view
-    fun setEditTextViewAttributes(editTextView: EditText, left: Int, top: Int, right: Int, bottom: Int) {
+    fun setEditTextViewAttributes(editTextView: EditText, left: Int, top: Int, right: Int, bottom: Int, hintText: String) {
 
         // Remove underlining in EditText
         editTextView.background = null
@@ -163,6 +158,7 @@ class RecipeActivity : Activity() {
         editTextView.setPadding(left, top, right, bottom)
         editTextView.textColor = getColor(R.color.textColorListCellPreparation)
         editTextView.hintTextColor = getColor(R.color.hintTextColor)
+        editTextView.hint = Html.fromHtml("<small><i>$hintText</i></small>", Html.FROM_HTML_MODE_COMPACT)
         editTextView.maxLines = 1
         editTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 17f)
         editTextView.setOnKeyListener { v, keyCode, event -> removeEmptyIngredientRowWhenNeeded(); createEmptyIngredientRowWhenNeeded() }
@@ -178,17 +174,6 @@ class RecipeActivity : Activity() {
             editTextView.inputType = InputType.TYPE_CLASS_NUMBER.or(InputType.TYPE_NUMBER_FLAG_DECIMAL)
             editTextView.gravity = Gravity.CENTER.or(Gravity.END)
         }
-    }
-
-
-    // Set hint text and hint text style for EditText view
-    fun setEditTextViewHint(editTextView: EditText, hintText: String) {
-
-        // When build version is nougat (SDK version 24) or older use new implementation
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-            editTextView.hint = Html.fromHtml("<small><i>$hintText</i></small>", Html.FROM_HTML_MODE_COMPACT)
-        else
-            editTextView.hint = Html.fromHtml("<small><i>$hintText</i></small>")
     }
 
 
@@ -211,6 +196,7 @@ class RecipeActivity : Activity() {
             hideKeyboard()
         }
     }
+
 
     // Toggle between edit mode and read-only mode
     fun toggleEditMode() {

@@ -3,19 +3,16 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
-
     defaultConfig {
         applicationId "pc.inspiredfood"
-        minSdkVersion 23
+        minSdkVersion 25
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
-
     buildTypes {
 
         release {
@@ -23,18 +20,19 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    productFlavors {
+    }
 }
 
 dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile "org.jetbrains.anko:anko-common:$anko_version"
     compile "org.jetbrains.anko:anko-sdk15:$anko_version"
     compile "org.jetbrains.anko:anko-sqlite:$anko_version"
-    compile 'com.android.support:appcompat-v7:25.3.0'
+    compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha9'
     testCompile 'junit:junit:4.12'
 }
