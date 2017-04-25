@@ -305,7 +305,7 @@ object CRUD {
 
 
     // READ List of recipe timers
-    fun getRecipeTimers(recipeId: Int): List<Pair<String, Int>> {
+    fun getRecipeTimers(recipeId: Int): MutableList<Pair<String, Int>> {
 
         var timers: List<Pair<String, Int>> = mutableListOf()
 
@@ -318,7 +318,7 @@ object CRUD {
                     .parseList(rowParser { name: String, mins: Int -> Pair(name, mins) })
         }
 
-        return timers
+        return timers.toMutableList()
     }
 
 

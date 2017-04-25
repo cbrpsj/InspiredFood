@@ -22,6 +22,7 @@
     <string name="hint_amount">Amount</string>
     <string name="hint_unit">Unit</string>
     <string name="hint_preparations"><small><i>Preparations</i></small></string>
+    <string name="hint_timer_name">Timer name</string>
     <string name="preparation">Preparation</string>
     <string name="timers">Timers</string>
     <string name="delete">Delete</string>

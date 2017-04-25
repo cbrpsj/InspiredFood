@@ -21,6 +21,7 @@
     <string name="hint_amount">Mængde</string>
     <string name="hint_unit">Enhed</string>
     <string name="hint_preparations"><small><i>Tilberedning</i></small></string>
+    <string name="hint_timer_name">Timernavn</string>
     <string name="preparation">Tilberedning</string>
     <string name="timers">Timere</string>
     <string name="delete">Slet</string>

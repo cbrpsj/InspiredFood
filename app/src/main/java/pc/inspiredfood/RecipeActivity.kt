@@ -1,19 +1,15 @@
 package pc.inspiredfood
 
 import android.app.Activity
-import android.graphics.drawable.Drawable
-import android.os.Build
 import android.os.Bundle
+import android.os.SystemClock
 import android.text.Html
-import android.text.InputFilter
 import android.text.InputType
-import android.util.Log
 import android.util.TypedValue
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.widget.*
 import kotlinx.android.synthetic.main.activity_recipe.*
-import kotlinx.android.synthetic.main.activity_recipe_list.*
 import org.jetbrains.anko.*
 import pc.inspiredfood.App.Companion.categories
 import pc.inspiredfood.App.Companion.ingredients
@@ -37,12 +33,14 @@ import pc.inspiredfood.CRUD.updatePreparation
 import pc.inspiredfood.CRUD.updateRecipeCategory
 import pc.inspiredfood.CRUD.updateRecipeName
 import java.text.NumberFormat
+import kotlin.coroutines.experimental.EmptyCoroutineContext.plus
 
 class RecipeActivity : Activity() {
 
     var id = 0
     var editModeEnabled = false
     var ingredientsInRecipe = mutableListOf<Triple<String, Double, String>>()
+    var timersInRecipe = mutableListOf<Pair<String, Int>>()
 
     // Holds long pressed table row view
     lateinit var tableRowView: View
@@ -101,22 +99,34 @@ class RecipeActivity : Activity() {
     // Get details about a specific recipe and map to UI
     fun getRecipeDetails() {
 
-        ingredientsInRecipe = getIngredientsInRecipe(id)
         recipe_name.setText(getRecipeName(id))
         recipe_preparation.setText(getPreparation(id))
 
+        // Map ingredient lines to UI
+        ingredientsInRecipe = getIngredientsInRecipe(id)
+
         for(ingredientLine in ingredientsInRecipe)
-            createTableRow(ingredientLine)
+            createIngredientTableRow(ingredientLine)
 
-        val timers = getRecipeTimers(id)
+        // Map timer lines to UI
+        timersInRecipe = getRecipeTimers(id)
 
-        for (timer in timers)
-            toast("Name: ${timer.first} - Time: ${timer.second}")
+        if (timersInRecipe.isEmpty())
+            recipe_timer_headline.visibility = View.INVISIBLE
+        else {
+
+            recipe_timer_headline.visibility = View.VISIBLE
+
+            for ((index, timer) in timersInRecipe.withIndex())
+                createTimerTableRow(timer)
+        }
+
+        createTimerTableRow(null)
     }
 
 
     // Create an ingredient table row
-    fun createTableRow(ingredientLine: Triple<String, Double, String>?) {
+    fun createIngredientTableRow(ingredientLine: Triple<String, Double, String>?) {
 
         // Create table row
         val tableRow = TableRow(this)
@@ -240,7 +250,7 @@ class RecipeActivity : Activity() {
         no_of_persons.clearFocus()
 
         // Create empty table row at bottom of ingredient table for new ingredient
-        createTableRow(null)
+        createIngredientTableRow(null)
 
         setupSpinner()
         makeViewsEditable()
@@ -292,14 +302,22 @@ class RecipeActivity : Activity() {
         makeViewUneditable(recipe_preparation)
         spinner.isEnabled = false
 
-        // Find all table rows in table layout
-        val tableRows = ingredients_table.childrenSequence()
+        // Find all table rows in ingredient table layout
+        var tableRows = ingredients_table.childrenSequence()
 
         for(tableRow in tableRows) {
 
             makeViewUneditable((tableRow as TableRow).getChildAt(0) as EditText)
             makeViewUneditable(tableRow.getChildAt(1) as EditText)
             makeViewUneditable(tableRow.getChildAt(2) as EditText)
+        }
+
+        // Find all table rows in timer table layout
+        tableRows = timers_table.childrenSequence()
+
+        for(tableRow in tableRows) {
+
+            makeViewUneditable((tableRow as TableRow).getChildAt(0) as EditText)
         }
     }
 
@@ -423,7 +441,7 @@ class RecipeActivity : Activity() {
 
         if (editModeEnabled && countEmptyFieldsInIngredientRow(ingredients_table.childCount - 1) == 0) {
 
-            createTableRow(null)
+            createIngredientTableRow(null)
             return true
         }
 
@@ -543,6 +561,140 @@ class RecipeActivity : Activity() {
     fun calculateAmount(noOfPeople: Int, newNoOfPeople: Int, amount: Double) =
             if (newNoOfPeople == noOfPeople) formatAmount(amount)
             else formatAmount((amount / noOfPeople) * newNoOfPeople)
+
+
+    // Create a timer table row
+    fun createTimerTableRow(timerLine: Pair<String, Int>?) {
+
+        val tableRow = TableRow(this)
+        val layoutParams = TableRow.LayoutParams()
+
+        // Set padding and border for table row
+        tableRow.setPadding(dpToPixel(5f), dpToPixel(5f), dpToPixel(7f), dpToPixel(5f))
+        tableRow.background = getDrawable(R.drawable.cell_border_and_background)
+
+        // Set weight for EditText views to ensure space between timer name and clock
+        layoutParams.weight = 1f
+
+        // Create timer name EditText view
+        val timerName = EditText(this)
+        timerName.background = null
+        timerName.setPadding(0, 0, 0, 0)
+        timerName.textColor = getColor(R.color.textColorListCellPreparation)
+        timerName.hintTextColor = getColor(R.color.hintTextColor)
+        timerName.hint = Html.fromHtml("<small><i>${R.string.hint_timer_name}</i></small>", Html.FROM_HTML_MODE_COMPACT)
+        timerName.maxLines = 1
+        timerName.setTextSize(TypedValue.COMPLEX_UNIT_SP, 17f)
+        timerName.layoutParams = layoutParams
+        tableRow.addView(timerName)
+
+        // Create timer value EditText view
+        val timerValue = EditText(this)
+        timerValue.background = null
+        timerValue.setPadding(0, 0, 0, 0)
+        timerValue.textColor = getColor(R.color.textColorListCellPreparation)
+        timerValue.hintTextColor = getColor(R.color.hintTextColor)
+        timerValue.inputType = InputType.TYPE_CLASS_NUMBER
+        timerValue.maxLines = 1
+        timerValue.maxWidth = 4
+        timerValue.setTextSize(TypedValue.COMPLEX_UNIT_SP, 17f)
+        timerValue.layoutParams = layoutParams
+        tableRow.addView(timerValue)
+
+        // Create timer clock Chronometer view
+        val timerClock = Chronometer(this)
+        timerClock.stop()
+        timerClock.isCountDown = true
+        timerClock.textColor = getColor(R.color.textColorListCellPreparation)
+        timerClock.setPadding(0, 0, 0, 0)
+        timerClock.layoutParams = layoutParams
+        timerClock.visibility = View.GONE
+        timerClock.setOnChronometerTickListener { timerListener(it) }
+        tableRow.addView(timerClock)
+
+        // Create timer button view
+        val timerButton = Button(this)
+        timerButton.background = getDrawable(R.drawable.button_border_and_background)
+        timerButton.text = "Start"
+        timerButton.applyRecursively { R.style.smallButtonStyle }
+        timerButton.onClick { startTimer(it) }
+        tableRow.addView(timerButton)
+
+        // If timer line is not null, map data from timer line to table row
+        if (timerLine != null) {
+
+            timerName.setText(timerLine.first)
+            timerValue.setText(timerLine.second.toString())
+        }
+        // Otherwise set default timer value
+        else timerValue.setText("10")
+
+        timers_table.addView(tableRow)
+    }
+
+
+    // Event handler for all timer buttons
+    fun startTimer(view: View?) {
+
+        // Use selected Button view to find the other views in the table row
+        val tableRow = view?.parent as TableRow
+        val timerValue = tableRow.getChildAt(1) as EditText
+        val timerClock = tableRow.getChildAt(2) as Chronometer
+        val timerButton = view as Button
+
+        // Toggle between timer value EditText view and timer clock Chronometer view
+        if (timerValue.visibility == View.VISIBLE) {
+
+            val valueString = timerValue.text.toString()
+
+            if (valueString.isEmpty() || valueString.toInt() == 0) {
+
+                longToast("Error! Timer value missing")
+                return
+            }
+
+            timerValue.visibility = View.GONE
+            timerClock.base = minutesToMillisecs(valueString.toInt())
+            timerClock.visibility = View.VISIBLE
+            timerClock.start()
+            timerButton.text = "Reset"
+        }
+        else {
+
+            timerValue.visibility = View.VISIBLE
+            timerClock.visibility = View.GONE
+            timerClock.stop()
+            timerButton.text = "Start"
+        }
+    }
+
+
+    // Event listener for all timer clocks
+    fun timerListener(view: View?) {
+
+        val tableRow = view?.parent as TableRow
+        val timerName = tableRow.getChildAt(0) as EditText
+        val timerClock = tableRow.getChildAt(2) as Chronometer
+        val timerButton = tableRow.getChildAt(3) as Button
+
+        // Check if timer has expired
+        if (timerClock.base < SystemClock.elapsedRealtime()) {
+
+            // Stop timer and set to zero (to prevent negative numbers)
+            timerClock.stop()
+            timerClock.base = SystemClock.elapsedRealtime()
+
+            val name = timerName.text.toString()
+
+            if (name.isEmpty())
+                longToast("Unnamed timer expired!")
+            else
+                longToast("$name timer expired!")
+        }
+    }
+
+
+    fun minutesToMillisecs(minutes: Int) = SystemClock.elapsedRealtime() + minutes * 60000
 
 
     // Convert amount (Double) to a string with between 0 - 2 decimals
