@@ -121,7 +121,7 @@ class RecipeActivity : Activity() {
                 createTimerTableRow(timer)
         }
 
-        createTimerTableRow(null)
+        //createTimerTableRow(null)
     }
 
 
@@ -654,7 +654,7 @@ class RecipeActivity : Activity() {
             }
 
             timerValue.visibility = View.GONE
-            timerClock.base = minutesToMillisecs(valueString.toInt())
+            timerClock.base = minutesToMillisPlusSystemTime(valueString.toInt())
             timerClock.visibility = View.VISIBLE
             timerClock.start()
             timerButton.text = "Reset"
@@ -694,7 +694,7 @@ class RecipeActivity : Activity() {
     }
 
 
-    fun minutesToMillisecs(minutes: Int) = SystemClock.elapsedRealtime() + minutes * 60000
+    fun minutesToMillisPlusSystemTime(minutes: Int) = SystemClock.elapsedRealtime() + minutes * 60000
 
 
     // Convert amount (Double) to a string with between 0 - 2 decimals
