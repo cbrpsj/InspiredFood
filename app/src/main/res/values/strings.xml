@@ -18,11 +18,12 @@
     <string name="recipe_name_error">Error! Recipe name missing</string>
     <string name="ingredient_error">Error! Ingredients has empty fields</string>
     <string name="hint_recipe_name"><small><i>Recipe name</i></small></string>
-    <string name="hint_ingredient">Ingredient</string>
-    <string name="hint_amount">Amount</string>
-    <string name="hint_unit">Unit</string>
+    <string name="hint_ingredient"><small><i>Ingredient</i></small></string>
+    <string name="hint_amount"><small><i>Amount</i></small></string>
+    <string name="hint_unit"><small><i>Unit</i></small></string>
     <string name="hint_preparations"><small><i>Preparations</i></small></string>
-    <string name="hint_timer_name">Timer name</string>
+    <string name="hint_timer_name"><small><i>Timer name</i></small></string>
+    <string name="hint_timer_minutes"><small><i>Minutes</i></small></string>
     <string name="preparation">Preparation</string>
     <string name="timers">Timers</string>
     <string name="delete">Delete</string>

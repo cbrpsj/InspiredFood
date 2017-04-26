@@ -51,27 +51,27 @@
         <RadioButton
             android:id="@+id/starters"
             android:text="@string/starters"
-            style="@style/radioButtonStyle" />
+            style="@style/radio_button_style" />
 
         <RadioButton
             android:id="@+id/mains"
             android:text="@string/mains"
-            style="@style/radioButtonStyle" />
+            style="@style/radio_button_style" />
 
         <RadioButton
             android:id="@+id/desserts"
             android:text="@string/desserts"
-            style="@style/radioButtonStyle" />
+            style="@style/radio_button_style" />
 
         <RadioButton
             android:id="@+id/favourites"
             android:text="@string/favourites"
-            style="@style/radioButtonStyle" />
+            style="@style/radio_button_style" />
 
         <RadioButton
             android:id="@+id/all"
             android:text="@string/all"
-            style="@style/radioButtonStyle" />
+            style="@style/radio_button_style" />
 
     </RadioGroup>
 

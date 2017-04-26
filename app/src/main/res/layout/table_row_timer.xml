@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<TableRow
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="5dp"
+    android:paddingTop="5dp"
+    android:paddingEnd="7dp"
+    android:paddingBottom="5dp"
+    android:background="@drawable/cell_border_and_background">
+
+    <EditText
+        style="@style/table_row_text_view_style"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:hint="@string/hint_timer_name"
+        android:inputType="textPhonetic"
+        android:completionThreshold="1"/>
+
+    <EditText
+        style="@style/table_row_text_view_style"
+        android:paddingStart="15dp"
+        android:paddingEnd="20dp"
+        android:textAlignment="viewEnd"
+        android:hint="@string/hint_timer_minutes"
+        android:selectAllOnFocus="true"
+        android:inputType="number"/>
+
+    <Chronometer
+        style="@style/table_row_text_view_style"
+        android:paddingStart="15dp"
+        android:paddingEnd="20dp"
+        android:textAlignment="viewEnd"
+        android:countDown="true"
+        android:visibility="gone"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button_border_and_background"
+        android:text="Start" />
+
+</TableRow>

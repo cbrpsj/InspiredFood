@@ -1,6 +1,8 @@
 package pc.inspiredfood
 
 import android.app.Activity
+import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
 import android.os.SystemClock
 import android.text.Html
@@ -74,17 +76,17 @@ class RecipeActivity : Activity() {
 
 
     // Create custom context menu for long pressed table row
-    override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
+    override fun onCreateContextMenu(menu: ContextMenu?, view: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
 
         // When not in edit mode or long pressed table row is the last row, then return
-        if (!editModeEnabled || ingredients_table.getChildAt(ingredients_table.childCount -1) == v)
+        if (!editModeEnabled || ingredients_table.getChildAt(ingredients_table.childCount -1) == view)
             return
 
         val inflate = menuInflater
         inflate.inflate(R.menu.context_menu, menu)
 
         // Save long pressed table row view
-        if (v != null) tableRowView = v
+        if (view != null) tableRowView = view
     }
 
 
@@ -92,6 +94,7 @@ class RecipeActivity : Activity() {
     override fun onContextItemSelected(item: MenuItem?): Boolean {
 
         ingredients_table.removeView(tableRowView)
+        timers_table.removeView(tableRowView)
         return true
     }
 
@@ -118,7 +121,7 @@ class RecipeActivity : Activity() {
             recipe_timer_headline.visibility = View.VISIBLE
 
             for ((index, timer) in timersInRecipe.withIndex())
-                createTimerTableRow(timer)
+                createTimerTableRow(timer) //createTimerTableRow(timer)
         }
 
         //createTimerTableRow(null)
@@ -128,80 +131,38 @@ class RecipeActivity : Activity() {
     // Create an ingredient table row
     fun createIngredientTableRow(ingredientLine: Triple<String, Double, String>?) {
 
-        // Create table row
-        val tableRow = TableRow(this)
-        val layoutParams = TableRow.LayoutParams()
+        // Setup inflater, and inflate custom ingredient table row
+        val inflater = applicationContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val tableRow = inflater.inflate(R.layout.table_row_ingredient, null) as TableRow
 
-        // Set padding and border for table row
-        tableRow.setPadding(dpToPixel(5f), dpToPixel(5f), dpToPixel(7f), dpToPixel(5f))
-        tableRow.background = getDrawable(R.drawable.cell_border_and_background)
+        // Register table row for the context menu
         registerForContextMenu(tableRow)
 
-        // Set weight (used in ingredient text view). Ensure space between ingredient and amount
-        layoutParams.weight = 1f
+        // Find all the views in in custom table row and cast to correct types
+        val ingredientView = tableRow.getChildAt(0) as AutoCompleteTextView
+        val amountView = tableRow.getChildAt(1) as EditText
+        val unitView = tableRow.getChildAt(2) as AutoCompleteTextView
 
-        // Create EditText view for table row
-        val editTextViewIngredient = AutoCompleteTextView(this)
-        val editTextViewAmount = EditText(this)
-        val editTextViewUnit = AutoCompleteTextView(this)
+        // Create an array adapter and set autocomplete's adapter to the new adapter
+        val ingredientAutoCompleteAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, ingredients.toList())
+        val unitAutoCompleteAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, units.toList())
 
-        // Create an arrayAdapter and set autocomplete's adapter to the new adapter
-        val autoCompleteAdapterIngredient = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, ingredients.toList())
-        editTextViewIngredient.setAdapter(autoCompleteAdapterIngredient)
+        ingredientView.setAdapter(ingredientAutoCompleteAdapter)
+        unitView.setAdapter(unitAutoCompleteAdapter)
 
-        val autoCompleteAdapterUnit = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, units.toList())
-        editTextViewUnit.setAdapter(autoCompleteAdapterUnit)
-
-        // Apply weight to ingredient EditText view and minimum width for unit
-        editTextViewIngredient.layoutParams = layoutParams
-        editTextViewUnit.minimumWidth = dpToPixel(55f)
-
-        // Set attributes, hints and hint text style for all three EditText views in the table row
-        setEditTextViewAttributes(editTextViewIngredient, 0, 0, 0, 0, getString(R.string.hint_ingredient))
-        setEditTextViewAttributes(editTextViewAmount, dpToPixel(15f), 0, dpToPixel(10f), 0, getString(R.string.hint_amount))
-        setEditTextViewAttributes(editTextViewUnit, 0, 0, 0, 0, getString(R.string.hint_unit))
-
-        // When ingredient line is not null, map data from ingredient line to table row
+        // When there is an ingredient line, add content to the table row's text views
         if (ingredientLine != null) {
 
-            editTextViewIngredient.setText(ingredientLine.first)
-            editTextViewAmount.setText(formatAmount(ingredientLine.second))
-            editTextViewUnit.setText(ingredientLine.third)
+            ingredientView.setText(ingredientLine.first)
+            amountView.setText(ingredientLine.second.toString())
+            unitView.setText(ingredientLine.third)
         }
 
-        // Add EditText views to table row, and add table row to table layout
-        tableRow.addView(editTextViewIngredient)
-        tableRow.addView(editTextViewAmount)
-        tableRow.addView(editTextViewUnit)
+        // Set on key event listener for all text views in table row
+        for (view in tableRow.childrenSequence())
+            view.setOnKeyListener { v, keyCode, event -> removeEmptyIngredientRowWhenNeeded(); createEmptyTableRowWhenNeeded() }
+
         ingredients_table.addView(tableRow)
-    }
-
-
-    // Set attributes and event listener to an EditText view
-    fun setEditTextViewAttributes(editTextView: EditText, left: Int, top: Int, right: Int, bottom: Int, hintText: String) {
-
-        // Remove underlining in EditText
-        editTextView.background = null
-
-        editTextView.setPadding(left, top, right, bottom)
-        editTextView.textColor = getColor(R.color.textColorListCellPreparation)
-        editTextView.hintTextColor = getColor(R.color.hintTextColor)
-        editTextView.hint = Html.fromHtml("<small><i>$hintText</i></small>", Html.FROM_HTML_MODE_COMPACT)
-        editTextView.maxLines = 1
-        editTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 17f)
-        editTextView.setOnKeyListener { v, keyCode, event -> removeEmptyIngredientRowWhenNeeded(); createEmptyIngredientRowWhenNeeded() }
-
-        if (editTextView is AutoCompleteTextView) {
-
-            editTextView.inputType = InputType.TYPE_TEXT_VARIATION_PHONETIC // To avoid spelling check
-            editTextView.gravity = Gravity.CENTER_VERTICAL
-            editTextView.threshold = 1 // Number of characters to enter before autocomplete activates
-        }
-        else {
-            // Edit text view is then for amount
-            editTextView.inputType = InputType.TYPE_CLASS_NUMBER.or(InputType.TYPE_NUMBER_FLAG_DECIMAL)
-            editTextView.gravity = Gravity.CENTER.or(Gravity.END)
-        }
     }
 
 
@@ -251,6 +212,7 @@ class RecipeActivity : Activity() {
 
         // Create empty table row at bottom of ingredient table for new ingredient
         createIngredientTableRow(null)
+        createTimerTableRow(null)
 
         setupSpinner()
         makeViewsEditable()
@@ -284,13 +246,22 @@ class RecipeActivity : Activity() {
         spinner.isEnabled = true
 
         // Find all table rows in table layout
-        val tableRows = ingredients_table.childrenSequence()
+        var tableRows = ingredients_table.childrenSequence()
 
         for(tableRow in tableRows) {
 
             makeViewEditable((tableRow as TableRow).getChildAt(0) as EditText)
             makeViewEditable(tableRow.getChildAt(1) as EditText)
             makeViewEditable(tableRow.getChildAt(2) as EditText)
+        }
+
+        // Find all table rows in timer table layout
+        tableRows = timers_table.childrenSequence()
+
+        for(tableRow in tableRows) {
+
+            makeViewEditable((tableRow as TableRow).getChildAt(0) as EditText)
+            (tableRow.getChildAt(3) as Button).isEnabled = false
         }
     }
 
@@ -318,6 +289,7 @@ class RecipeActivity : Activity() {
         for(tableRow in tableRows) {
 
             makeViewUneditable((tableRow as TableRow).getChildAt(0) as EditText)
+            (tableRow.getChildAt(3) as Button).isEnabled = true
         }
     }
 
@@ -437,7 +409,7 @@ class RecipeActivity : Activity() {
 
 
     // When all fields in last table row are filled out, create new empty row
-    fun createEmptyIngredientRowWhenNeeded(): Boolean {
+    fun createEmptyTableRowWhenNeeded(): Boolean {
 
         if (editModeEnabled && countEmptyFieldsInIngredientRow(ingredients_table.childCount - 1) == 0) {
 
@@ -446,30 +418,6 @@ class RecipeActivity : Activity() {
         }
 
         return false
-    }
-
-
-    // Setup spinner (dropdown) based on state of edit mode
-    fun setupSpinner() {
-
-        // Find localised category names
-        val localised_categories = listOf<String>(getString(R.string.starter), getString(R.string.main), getString(R.string.dessert))
-
-        // Create arrayAdapter with custom default spinner
-        var spinnerAdapter = ArrayAdapter(this, R.layout.spinner_default, localised_categories)
-        spinner.background = getDrawable(R.drawable.spinner_default_background)
-
-        // When edit mode enabled, set spinner to custom edit layout
-        if (editModeEnabled) {
-            spinnerAdapter = ArrayAdapter(this, R.layout.spinner_edit, localised_categories)
-            spinner.background = getDrawable(R.drawable.spinner_edit_background)
-        }
-
-        // Set custom spinner popup
-        spinnerAdapter.setDropDownViewResource(R.layout.spinner_popup)
-
-        spinner.adapter = spinnerAdapter
-        spinner.setSelection(findRecipeCategory())
     }
 
 
@@ -509,6 +457,30 @@ class RecipeActivity : Activity() {
 
         person_text.text =  if (noOfPeople < 2) getString(R.string.recipe_info_person)
         else getString(R.string.recipe_info_persons)
+    }
+
+
+    // Setup spinner (dropdown) based on state of edit mode
+    fun setupSpinner() {
+
+        // Find localised category names
+        val localised_categories = listOf<String>(getString(R.string.starter), getString(R.string.main), getString(R.string.dessert))
+
+        // Create arrayAdapter with custom default spinner
+        var spinnerAdapter = ArrayAdapter(this, R.layout.spinner_default, localised_categories)
+        spinner.background = getDrawable(R.drawable.spinner_default_background)
+
+        // When edit mode enabled, set spinner to custom edit layout
+        if (editModeEnabled) {
+            spinnerAdapter = ArrayAdapter(this, R.layout.spinner_edit, localised_categories)
+            spinner.background = getDrawable(R.drawable.spinner_edit_background)
+        }
+
+        // Set custom spinner popup
+        spinnerAdapter.setDropDownViewResource(R.layout.spinner_popup)
+
+        spinner.adapter = spinnerAdapter
+        spinner.setSelection(findRecipeCategory())
     }
 
 
@@ -553,7 +525,7 @@ class RecipeActivity : Activity() {
             for (i in categories.indices)
                 if (getRecipeCategory(id) == categories[i]) return i
 
-        return 1 // default main course - can be used for new recipes
+        return 1 // default main course - used for new recipes
     }
 
 
@@ -566,68 +538,30 @@ class RecipeActivity : Activity() {
     // Create a timer table row
     fun createTimerTableRow(timerLine: Pair<String, Int>?) {
 
-        val tableRow = TableRow(this)
-        val layoutParams = TableRow.LayoutParams()
+        // Setup inflater, and inflate custom ingredient table row
+        val inflater = applicationContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val tableRow = inflater.inflate(R.layout.table_row_timer, null) as TableRow
 
-        // Set padding and border for table row
-        tableRow.setPadding(dpToPixel(5f), dpToPixel(5f), dpToPixel(7f), dpToPixel(5f))
-        tableRow.background = getDrawable(R.drawable.cell_border_and_background)
+        // Register table row for the context menu
+        registerForContextMenu(tableRow)
 
-        // Set weight for EditText views to ensure space between timer name and clock
-        layoutParams.weight = 1f
+        // Find all the views in in custom table row and cast to correct types
+        val timerNameView = tableRow.getChildAt(0) as EditText
+        val timerValueView = tableRow.getChildAt(1) as EditText
+        val timerClockView = tableRow.getChildAt(2) as Chronometer
+        val timerButton = tableRow.getChildAt(3) as Button
 
-        // Create timer name EditText view
-        val timerName = EditText(this)
-        timerName.background = null
-        timerName.setPadding(0, 0, 0, 0)
-        timerName.textColor = getColor(R.color.textColorListCellPreparation)
-        timerName.hintTextColor = getColor(R.color.hintTextColor)
-        timerName.hint = Html.fromHtml("<small><i>${R.string.hint_timer_name}</i></small>", Html.FROM_HTML_MODE_COMPACT)
-        timerName.maxLines = 1
-        timerName.setTextSize(TypedValue.COMPLEX_UNIT_SP, 17f)
-        timerName.layoutParams = layoutParams
-        tableRow.addView(timerName)
-
-        // Create timer value EditText view
-        val timerValue = EditText(this)
-        timerValue.background = null
-        timerValue.setPadding(0, 0, 0, 0)
-        timerValue.textColor = getColor(R.color.textColorListCellPreparation)
-        timerValue.hintTextColor = getColor(R.color.hintTextColor)
-        timerValue.inputType = InputType.TYPE_CLASS_NUMBER
-        timerValue.maxLines = 1
-        timerValue.maxWidth = 4
-        timerValue.setTextSize(TypedValue.COMPLEX_UNIT_SP, 17f)
-        timerValue.layoutParams = layoutParams
-        tableRow.addView(timerValue)
-
-        // Create timer clock Chronometer view
-        val timerClock = Chronometer(this)
-        timerClock.stop()
-        timerClock.isCountDown = true
-        timerClock.textColor = getColor(R.color.textColorListCellPreparation)
-        timerClock.setPadding(0, 0, 0, 0)
-        timerClock.layoutParams = layoutParams
-        timerClock.visibility = View.GONE
-        timerClock.setOnChronometerTickListener { timerListener(it) }
-        tableRow.addView(timerClock)
-
-        // Create timer button view
-        val timerButton = Button(this)
-        timerButton.background = getDrawable(R.drawable.button_border_and_background)
-        timerButton.text = "Start"
-        timerButton.applyRecursively { R.style.smallButtonStyle }
-        timerButton.onClick { startTimer(it) }
-        tableRow.addView(timerButton)
+        timerClockView.stop()
+        timerClockView.setOnChronometerTickListener { timerListener(it) }
 
         // If timer line is not null, map data from timer line to table row
         if (timerLine != null) {
 
-            timerName.setText(timerLine.first)
-            timerValue.setText(timerLine.second.toString())
+            timerNameView.setText(timerLine.first)
+            timerValueView.setText(timerLine.second.toString())
         }
-        // Otherwise set default timer value
-        else timerValue.setText("10")
+
+        timerButton.onClick { startTimer(it) }
 
         timers_table.addView(tableRow)
     }
