@@ -76,15 +76,23 @@ class RecipeActivity : Activity() {
     // Create custom context menu for long pressed table row
     override fun onCreateContextMenu(menu: ContextMenu?, view: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
 
-        // When not in edit mode or long pressed table row is the last row, then return
-        if (!editModeEnabled || ingredients_table.getChildAt(ingredients_table.childCount -1) == view)
+        val tableLayout = view?.parent as TableLayout
+
+        // If not in edit mode, then return
+        if (!editModeEnabled) return
+
+        // If long pressed table row is the last ingredient or timer row, then return
+        if (tableLayout.id == ingredients_table.id && ingredients_table.getChildAt(ingredients_table.childCount -1) == view)
+            return
+
+        if (tableLayout.id == timers_table.id && timers_table.getChildAt(timers_table.childCount -1) == view)
             return
 
         val inflate = menuInflater
         inflate.inflate(R.menu.context_menu, menu)
 
         // Save long pressed table row view
-        if (view != null) tableRowView = view
+        tableRowView = view
     }
 
 
@@ -213,7 +221,7 @@ class RecipeActivity : Activity() {
         if (ingredientLine != null) {
 
             ingredientView.setText(ingredientLine.first)
-            amountView.setText(ingredientLine.second.toString())
+            amountView.setText(formatAmount(ingredientLine.second))
             unitView.setText(ingredientLine.third)
         }
 
@@ -336,14 +344,12 @@ class RecipeActivity : Activity() {
         val tableRows = timers_table.childrenSequence()
         var indexOfTableRowToRemove: Int? = null
 
-        for ((index, tableRow) in tableRows.withIndex()) {
-
+        for ((index, tableRow) in tableRows.withIndex())
             if (countEmptyFieldsInTimerRow(index) == 2 && index != tableRows.count() - 1) {
 
                 indexOfTableRowToRemove = index
                 break
             }
-        }
 
         if (indexOfTableRowToRemove != null) {
 
@@ -413,11 +419,9 @@ class RecipeActivity : Activity() {
             // Toast message to the user
             val name = timerName.text.toString()
 
-            var msg =
-                if(name.isEmpty()) getString(R.string.timer_unnamed)
-                else name
-
-            msg += getString(R.string.timer_expired)
+            val msg =
+                if(name.isEmpty()) getString(R.string.timer_nameless)
+                else name + getString(R.string.timer_expired)
 
             longToast(msg)
 
@@ -607,7 +611,7 @@ class RecipeActivity : Activity() {
         for ((index, tableRow) in timerTableRows.withIndex()) {
 
             // Remove any leading zeros from minute field
-            var minutes = (tableRow as TableRow).getChildAt(1) as EditText
+            val minutes = (tableRow as TableRow).getChildAt(1) as EditText
 
             if (minutes.text.toString().isNotEmpty())
                 minutes.setText(minutes.text.toString().toInt().toString())
@@ -642,6 +646,9 @@ class RecipeActivity : Activity() {
             val ingredientName = ((tableRow as TableRow).getChildAt(0) as EditText).text.toString()
             val amount = (tableRow.getChildAt(1) as EditText).text.toString().replace(",", ".").toDouble()
             val unitName = (tableRow.getChildAt(2) as EditText).text.toString()
+
+            // Update format for ingredient amount
+            (tableRow.getChildAt(1) as EditText).setText(formatAmount(amount))
 
             // Create potentially new ingredient and unit in DB
             createIngredient(ingredientName)
@@ -770,5 +777,5 @@ class RecipeActivity : Activity() {
 
 
     // Convert DP to Pixel
-    fun dpToPixel(dp: Float) = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.displayMetrics).toInt()
+    // fun dpToPixel(dp: Float) = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.displayMetrics).toInt()
 }

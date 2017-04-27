@@ -17,8 +17,8 @@
     <string name="preparation">Tilberedning</string>
     <string name="timers">Timere</string>
     <string name="timer_start">Start</string>
-    <string name="timer_reset">Reset</string>
-    <string name="timer_unnamed">Navnløs</string>
+    <string name="timer_reset">Nulstil</string>
+    <string name="timer_nameless">Timer udløbet!</string>
     <string name="timer_expired">" timer udløbet!"</string>
     <string name="delete">Slet</string>
     <string name="recipe_name_error">Fejl! Opskriftnavn mangler</string>

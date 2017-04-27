@@ -19,7 +19,7 @@
     <string name="timers">Timers</string>
     <string name="timer_start">Start</string>
     <string name="timer_reset">Reset</string>
-    <string name="timer_unnamed">Unnamed</string>
+    <string name="timer_nameless">Timer expired!</string>
     <string name="timer_expired">" timer expired!"</string>
     <string name="delete">Delete</string>
     <string name="recipe_name_error">Error! Recipe name missing</string>
