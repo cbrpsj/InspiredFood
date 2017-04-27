@@ -14,8 +14,16 @@
     <string name="recipe_info_person">person</string>
     <string name="recipe_info_persons">personer</string>
     <string name="ingredients">Ingredienser</string>
+    <string name="preparation">Tilberedning</string>
+    <string name="timers">Timere</string>
+    <string name="timer_start">Start</string>
+    <string name="timer_reset">Reset</string>
+    <string name="timer_unnamed">Navnløs</string>
+    <string name="timer_expired">" timer udløbet!"</string>
+    <string name="delete">Slet</string>
     <string name="recipe_name_error">Fejl! Opskriftnavn mangler</string>
-    <string name="ingredient_error">Fejl! Ingredienser har tomme felter</string>
+    <string name="ingredient_error">Fejl! Ingrediens har tomme felter</string>
+    <string name="timer_error">Error! Timer har tomme felter</string>
     <string name="hint_recipe_name"><small><i>Opskriftnavn</i></small></string>
     <string name="hint_ingredient"><small><i>Ingrediens</i></small></string>
     <string name="hint_amount"><small><i>Mængde</i></small></string>
@@ -23,7 +31,4 @@
     <string name="hint_preparations"><small><i>Tilberedning</i></small></string>
     <string name="hint_timer_name"><small><i>Timernavn</i></small></string>
     <string name="hint_timer_minutes"><small><i>Minutter</i></small></string>
-    <string name="preparation">Tilberedning</string>
-    <string name="timers">Timere</string>
-    <string name="delete">Slet</string>
 </resources>

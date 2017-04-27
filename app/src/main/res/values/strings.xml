@@ -15,8 +15,16 @@
     <string name="recipe_info_person">person</string>
     <string name="recipe_info_persons">persons</string>
     <string name="ingredients">Ingredients</string>
+    <string name="preparation">Preparation</string>
+    <string name="timers">Timers</string>
+    <string name="timer_start">Start</string>
+    <string name="timer_reset">Reset</string>
+    <string name="timer_unnamed">Unnamed</string>
+    <string name="timer_expired">" timer expired!"</string>
+    <string name="delete">Delete</string>
     <string name="recipe_name_error">Error! Recipe name missing</string>
-    <string name="ingredient_error">Error! Ingredients has empty fields</string>
+    <string name="ingredient_error">Error! Ingredient has empty fields</string>
+    <string name="timer_error">Error! Timer has empty fields</string>
     <string name="hint_recipe_name"><small><i>Recipe name</i></small></string>
     <string name="hint_ingredient"><small><i>Ingredient</i></small></string>
     <string name="hint_amount"><small><i>Amount</i></small></string>
@@ -24,7 +32,4 @@
     <string name="hint_preparations"><small><i>Preparations</i></small></string>
     <string name="hint_timer_name"><small><i>Timer name</i></small></string>
     <string name="hint_timer_minutes"><small><i>Minutes</i></small></string>
-    <string name="preparation">Preparation</string>
-    <string name="timers">Timers</string>
-    <string name="delete">Delete</string>
 </resources>

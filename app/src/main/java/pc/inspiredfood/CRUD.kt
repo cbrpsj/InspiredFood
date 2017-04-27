@@ -101,6 +101,22 @@ object CRUD {
     }
 
 
+    // CREATE Several timers in a specific recipe
+    fun createTimersInRecipe(recipeId: Int, timers: List<Pair<String, Int>>) {
+
+        RecipeDBHelper.instance.use {
+
+            for(timer in timers) {
+
+                insert( C.TimersTable.tableName,
+                        C.TimersTable.recipeId to recipeId,
+                        C.TimersTable.timerName to timer.first,
+                        C.TimersTable.minutes to timer.second)
+            }
+        }
+    }
+
+
 
     /********* READ Operations: *********/
 
