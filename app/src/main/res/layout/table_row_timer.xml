@@ -16,6 +16,7 @@
         android:gravity="center_vertical"
         android:hint="@string/hint_timer_name"
         android:inputType="textPhonetic"
+        android:maxLength="20"
         android:completionThreshold="1"/>
 
     <EditText

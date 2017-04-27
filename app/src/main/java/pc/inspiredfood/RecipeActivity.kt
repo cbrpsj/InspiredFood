@@ -99,8 +99,15 @@ class RecipeActivity : Activity() {
     // Remove long pressed table row view
     override fun onContextItemSelected(item: MenuItem?): Boolean {
 
-        ingredients_table.removeView(tableRowView)
-        timers_table.removeView(tableRowView)
+        val tableLayout = tableRowView.parent as TableLayout
+
+        // If long pressed table row is the last ingredient or timer row, then return
+        if (tableLayout.id == ingredients_table.id)
+            ingredients_table.removeView(tableRowView)
+
+        if (tableLayout.id == timers_table.id)
+            timers_table.removeView(tableRowView)
+
         return true
     }
 
@@ -774,8 +781,4 @@ class RecipeActivity : Activity() {
 
 
     fun hideKeyboard() { inputMethodManager.hideSoftInputFromWindow(recipe_detail.windowToken, 0) }
-
-
-    // Convert DP to Pixel
-    // fun dpToPixel(dp: Float) = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.displayMetrics).toInt()
 }

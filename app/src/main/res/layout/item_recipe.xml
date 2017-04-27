@@ -15,6 +15,6 @@
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
         android:textColor="@color/textColorListCellPreparation"
-        android:textSize="20sp"/>
+        android:textSize="24sp"/>
 
 </LinearLayout>

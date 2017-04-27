@@ -34,7 +34,7 @@
         android:minWidth="55dp"
         android:hint="@string/hint_unit"
         android:inputType="textPhonetic"
-        android:maxLength="7"
+        android:maxLength="5"
         android:completionThreshold="1"/>
 
 </TableRow>
