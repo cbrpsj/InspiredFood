@@ -71,10 +71,10 @@ class RecipeListActivity : ListActivity() {
         // Setup bundle with array of longs containing only recipe id
         val bundle = Bundle()
         val arrayWithRecipeId = longArrayOf(recipeId.toString().toLong())
-        bundle.putLongArray("InterActivityData", arrayWithRecipeId)
+        bundle.putLongArray(C.recipeDataArray, arrayWithRecipeId)
 
         // Go to recipe details page while transferring bundle
-        startActivity(intentFor<RecipeActivity>("RecipeDetails" to bundle))
+        startActivity(intentFor<RecipeActivity>(C.recipeDataBundle to bundle))
     }
 
 
@@ -112,19 +112,6 @@ class RecipeListActivity : ListActivity() {
     }
 
 
-    // Add new recipe
-    fun addRecipe() {
-
-        // Setup bundle with array of longs containing -1 to indicate new recipe
-        val bundle = Bundle()
-        val arrayWithoutRecipeId = longArrayOf(-1)
-        bundle.putLongArray("InterActivityData", arrayWithoutRecipeId)
-
-        // Go to recipe details page while transferring bundle
-        startActivity(intentFor<RecipeActivity>("RecipeDetails" to bundle))
-    }
-
-
     // Filter recipes (sorted alphabetically) based on selected radio button and update list view
     fun filterRecipes() {
 
@@ -143,5 +130,18 @@ class RecipeListActivity : ListActivity() {
 
         // Map data from tempList to list view
         listAdapter = RecipeAdapter(this@RecipeListActivity, tempList)
+    }
+
+
+    // Add new recipe
+    fun addRecipe() {
+
+        // Setup bundle with array of longs containing -1 to indicate new recipe
+        val bundle = Bundle()
+        val arrayWithoutRecipeId = longArrayOf(-1)
+        bundle.putLongArray(C.recipeDataArray, arrayWithoutRecipeId)
+
+        // Go to recipe details page while transferring bundle
+        startActivity(intentFor<RecipeActivity>(C.recipeDataBundle to bundle))
     }
 }

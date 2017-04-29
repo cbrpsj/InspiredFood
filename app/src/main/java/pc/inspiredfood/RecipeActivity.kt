@@ -2,6 +2,7 @@ package pc.inspiredfood
 
 import android.app.Activity
 import android.content.Context
+import android.content.DialogInterface
 import android.media.Ringtone
 import android.media.RingtoneManager
 import android.net.Uri
@@ -68,8 +69,8 @@ class RecipeActivity : Activity() {
         ringtone = RingtoneManager.getRingtone(applicationContext, alarmSound)
 
         // Retrieve bundle holding long array from previous activity
-        val bundle = intent.getBundleExtra("RecipeDetails")
-        val longArray = bundle.getLongArray("InterActivityData")
+        val bundle = intent.getBundleExtra(C.recipeDataBundle)
+        val longArray = bundle.getLongArray(C.recipeDataArray)
 
         // Recipe id is the first array element
         id = longArray[0].toInt()
@@ -529,11 +530,18 @@ class RecipeActivity : Activity() {
                 if(name.isEmpty()) getString(R.string.timer_nameless_expired)
                 else name + getString(R.string.timer_expired)
 
-            // Display a timer alert message
-            alert(msg, getString(R.string.timer_expired_headline)) {
+            // Setup a timer alert message
+            val alertDialog = alert(msg, getString(R.string.timer_expired_headline)) {
 
-                positiveButton("OK") { ringtone.stop() }
-            }.show().dialog?.setCanceledOnTouchOutside(false)
+                positiveButton(getString(R.string.ok)) { ringtone.stop() }
+            }
+
+            // Display alert and set text color and text size
+            alertDialog.show()
+            alertDialog.dialog?.setCanceledOnTouchOutside(false)
+            alertDialog.dialog?.getButton(DialogInterface.BUTTON_POSITIVE)?.textColor = getColor(R.color.textColorListCellPreparation)
+            alertDialog.dialog?.getButton(DialogInterface.BUTTON_POSITIVE)?.textSize = 22f
+            (alertDialog.dialog?.findViewById(android.R.id.message) as TextView).textSize = 20f
 
             // Vibrate the phone, if possible
             val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
@@ -622,9 +630,9 @@ class RecipeActivity : Activity() {
 
             // Setup bundle with array of longs containing recipe id, timer ids and remaining millis
             val bundle = Bundle()
-            bundle.putLongArray("InterActivityData", recipeIdAndTimerData.toLongArray())
+            bundle.putLongArray(C.recipeDataArray, recipeIdAndTimerData.toLongArray())
 
-            startActivity(intentFor<RecipeActivity>("RecipeDetails" to bundle))
+            startActivity(intentFor<RecipeActivity>(C.recipeDataBundle to bundle))
         }
     }
 

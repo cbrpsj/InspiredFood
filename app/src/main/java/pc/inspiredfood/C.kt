@@ -6,6 +6,8 @@ object C {
 
     val timerRunning = "timerRunning"
     val timerStopped = "timerStopped"
+    val recipeDataArray = "recipeDataArray"
+    val recipeDataBundle = "recipeDataBundle"
 
     val dbName = "Recipes"
 

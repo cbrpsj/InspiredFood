@@ -22,6 +22,7 @@
     <string name="timer_expired_headline">Timer udløbet!</string>
     <string name="timer_nameless_expired">Unavngiven timer færdig.</string>
     <string name="timer_expired">" færdig."</string>
+    <string name="send_sms">Send SMS</string>
     <string name="delete">Slet</string>
     <string name="recipe_name_error">Fejl! Opskriftnavn mangler</string>
     <string name="no_of_people_error">Fejl! Antal af personer skal være mellem 1 og 20</string>
@@ -35,4 +36,5 @@
     <string name="hint_preparations"><small><i>Tilberedning</i></small></string>
     <string name="hint_timer_name"><small><i>Timernavn</i></small></string>
     <string name="hint_timer_minutes"><small><i>Minutter</i></small></string>
+    <string name="hint_phone_number"><small><i>Indsæt telefonnummer</i></small></string>
 </resources>
