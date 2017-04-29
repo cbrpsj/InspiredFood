@@ -24,8 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:textSize="30sp"
-            android:textColor="@color/defaultBlack"
+            style="@style/text_activity_headline"
             android:text="@string/app_name" />
 
         <Button
@@ -34,6 +33,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
+            android:textSize="24sp"
             android:background="@drawable/button_border_and_background"
             android:text="@string/add" />
 
@@ -51,27 +51,27 @@
         <RadioButton
             android:id="@+id/starters"
             android:text="@string/starters"
-            style="@style/radio_button_style" />
+            style="@style/radio_button" />
 
         <RadioButton
             android:id="@+id/mains"
             android:text="@string/mains"
-            style="@style/radio_button_style" />
+            style="@style/radio_button" />
 
         <RadioButton
             android:id="@+id/desserts"
             android:text="@string/desserts"
-            style="@style/radio_button_style" />
+            style="@style/radio_button" />
 
         <RadioButton
             android:id="@+id/favourites"
             android:text="@string/favourites"
-            style="@style/radio_button_style" />
+            style="@style/radio_button" />
 
         <RadioButton
             android:id="@+id/all"
             android:text="@string/all"
-            style="@style/radio_button_style" />
+            style="@style/radio_button" />
 
     </RadioGroup>
 

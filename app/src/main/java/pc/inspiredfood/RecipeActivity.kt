@@ -2,18 +2,16 @@ package pc.inspiredfood
 
 import android.app.Activity
 import android.content.Context
+import android.opengl.Visibility
 import android.os.Bundle
 import android.os.SystemClock
 import android.os.Vibrator
-import android.util.TypedValue
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.widget.*
 import kotlinx.android.synthetic.main.activity_recipe.*
 import org.jetbrains.anko.*
 import pc.inspiredfood.App.Companion.categories
-import pc.inspiredfood.App.Companion.ingredients
-import pc.inspiredfood.App.Companion.units
 import pc.inspiredfood.App.Companion.updateRecipeList
 import pc.inspiredfood.CRUD.createEmptyRecipe
 import pc.inspiredfood.CRUD.createIngredient
@@ -70,6 +68,7 @@ class RecipeActivity : Activity() {
 
         // Set event listener for edit/save button
         button_edit_save.onClick { toggleEditMode() }
+        button_cancel.onClick { cancelEditRecipe() }
     }
 
 
@@ -191,10 +190,10 @@ class RecipeActivity : Activity() {
         val timersInRecipe = getRecipeTimers(id)
 
         if (timersInRecipe.isEmpty())
-            recipe_timer_headline.visibility = View.INVISIBLE
+            timer_headline.visibility = View.INVISIBLE
         else {
 
-            recipe_timer_headline.visibility = View.VISIBLE
+            timer_headline.visibility = View.VISIBLE
 
             for ((index, timer) in timersInRecipe.withIndex())
                 createTimerTableRow(timer)
@@ -205,32 +204,18 @@ class RecipeActivity : Activity() {
     // Create an ingredient table row
     fun createIngredientTableRow(ingredientLine: Triple<String, Double, String>?) {
 
-        // Setup inflater, and inflate custom ingredient table row
-        val inflater = applicationContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val tableRow = inflater.inflate(R.layout.table_row_ingredient, null) as TableRow
-
-        // Register table row for the context menu
-        registerForContextMenu(tableRow)
-
-        // Find all the views in custom table row and cast to correct types
-        val ingredientView = tableRow.getChildAt(0) as AutoCompleteTextView
-        val amountView = tableRow.getChildAt(1) as EditText
-        val unitView = tableRow.getChildAt(2) as AutoCompleteTextView
-
-        // Create an array adapter and set autocomplete's adapter to the new adapter
-        val ingredientAutoCompleteAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, ingredients.toList())
-        val unitAutoCompleteAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, units.toList())
-
-        ingredientView.setAdapter(ingredientAutoCompleteAdapter)
-        unitView.setAdapter(unitAutoCompleteAdapter)
+        val tableRow = TableRowFactory.createIngredientTableRow(this)
 
         // When there is an ingredient line, add content to the table row's text views
         if (ingredientLine != null) {
 
-            ingredientView.setText(ingredientLine.first)
-            amountView.setText(formatAmount(ingredientLine.second))
-            unitView.setText(ingredientLine.third)
+            (tableRow.getChildAt(0) as AutoCompleteTextView).setText(ingredientLine.first)
+            (tableRow.getChildAt(1) as EditText).setText(formatAmount(ingredientLine.second))
+            (tableRow.getChildAt(2) as AutoCompleteTextView).setText(ingredientLine.third)
         }
+
+        // Register table row for the context menu
+        registerForContextMenu(tableRow)
 
         // Set on key event listener for all text views in table row
         for (view in tableRow.childrenSequence())
@@ -292,12 +277,7 @@ class RecipeActivity : Activity() {
     // Create a timer table row
     fun createTimerTableRow(timerLine: Pair<String, Int>?) {
 
-        // Setup inflater, and inflate custom timer table row
-        val inflater = applicationContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val tableRow = inflater.inflate(R.layout.table_row_timer, null) as TableRow
-
-        // Register table row for the context menu
-        registerForContextMenu(tableRow)
+        val tableRow = TableRowFactory.createTimerTableRow(this)
 
         // Find all the views in custom table row and cast to correct types
         val timerNameView = tableRow.getChildAt(0) as EditText
@@ -314,6 +294,9 @@ class RecipeActivity : Activity() {
             timerNameView.setText(timerLine.first)
             minutesView.setText(timerLine.second.toString())
         }
+
+        // Register table row for the context menu
+        registerForContextMenu(tableRow)
 
         // Set on key event listener for EditText views in table row
         for (view in tableRow.childrenSequence())
@@ -432,6 +415,10 @@ class RecipeActivity : Activity() {
 
             longToast(msg)
 
+            alert(msg, "Timer expired") {
+                positiveButton("OK") { }
+            }.show()
+
             // Vibrate the phone, if possible
             val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
 
@@ -472,13 +459,19 @@ class RecipeActivity : Activity() {
         createIngredientTableRow(null)
 
         // Show timer headline
-        recipe_timer_headline.visibility = View.VISIBLE
+        timer_headline.visibility = View.VISIBLE
 
         // Create empty table row at bottom of timer table for new timer
         createTimerTableRow(null)
 
         setupSpinner()
         makeViewsEditable()
+    }
+
+
+    // Exit edit mode and dismiss changes
+    fun cancelEditRecipe() {
+
     }
 
 
@@ -504,6 +497,7 @@ class RecipeActivity : Activity() {
     // Enable editing of recipe fields
     fun makeViewsEditable() {
 
+        button_cancel.visibility = View.VISIBLE
         makeViewEditable(recipe_name)
         makeViewEditable(recipe_preparation)
         spinner.isEnabled = true
@@ -533,6 +527,7 @@ class RecipeActivity : Activity() {
     // Disable editing of recipe fields
     fun makeViewsUneditable() {
 
+        button_cancel.visibility = View.GONE
         makeViewUneditable(recipe_name)
         makeViewUneditable(recipe_preparation)
         spinner.isEnabled = false
@@ -708,7 +703,7 @@ class RecipeActivity : Activity() {
         createTimersInRecipe(id, tmpTimersInRecipe)
 
         // If no timers left, then remove timer headline
-        recipe_timer_headline.visibility =
+        timer_headline.visibility =
                 if (tmpTimersInRecipe.isEmpty()) View.INVISIBLE
                 else View.VISIBLE
 

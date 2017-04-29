@@ -3,12 +3,8 @@
 <TextView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/spinner_item"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:textSize="15sp"
-    android:textStyle="italic"
-    android:paddingEnd="20dp"
-    android:textColor="@color/defaultBlack">
+    style="@style/info_line"
+    android:paddingEnd="20dp">
 </TextView>
 
 

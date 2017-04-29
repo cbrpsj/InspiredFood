@@ -8,8 +8,8 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <!-- Custom style for radio buttons-->
-    <style name="radio_button_style">
+    <!-- Custom style for radio buttons -->
+    <style name="radio_button">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_weight">1</item>
@@ -18,7 +18,57 @@
         <item name="android:onClick">mainButtonClicked</item>
     </style>
 
-    <!-- Custom style for views in table row-->
+    <!-- Custom style for activity headlines -->
+    <style name="text_activity_headline">
+        <item name="android:textSize">30sp</item>
+        <item name="android:textColor">@color/defaultBlack</item>
+    </style>
+
+    <!-- Custom style for list view items -->
+    <style name="text_list_view_item">
+        <item name="android:textSize">24sp</item>
+        <item name="android:textColor">@color/textColorListCellPreparation</item>
+    </style>
+
+    <!-- Custom style for info line -->
+    <style name="info_line">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/defaultBlack</item>
+        <item name="android:textStyle">italic</item>
+    </style>
+
+    <!-- Custom style for category headlines -->
+    <style name="category_headline">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingTop">30dp</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:textColor">@color/defaultBlack</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+
+    <!-- Custom style for table layouts -->
+    <style name="table_layout">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:focusableInTouchMode">true</item>
+        <item name="android:clickable">true</item>
+    </style>
+
+    <!-- Custom style for table rows -->
+    <style name="table_row_style">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingStart">5dp</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:paddingEnd">7dp</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:background">@drawable/cell_border_and_background</item>
+    </style>
+
+    <!-- Custom style for views in table rows -->
     <style name="table_row_text_view_style">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
