@@ -4,6 +4,9 @@ object C {
 
     val recipeId = "recipeId"
 
+    val timerRunning = "timerRunning"
+    val timerStopped = "timerStopped"
+
     val dbName = "Recipes"
 
     object RecipesTable {

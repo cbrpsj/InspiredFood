@@ -2,6 +2,7 @@ package pc.inspiredfood
 
 import android.app.ListActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.ContextMenu
 import android.view.MenuItem
 import android.view.View
@@ -67,8 +68,13 @@ class RecipeListActivity : ListActivity() {
         // Update popularity counter for the chosen recipe
         recipes.find { it.id == recipeId }?.updatePopularity()
 
-        // Go to recipe details page
-        startActivity(intentFor<RecipeActivity>(C.recipeId to recipeId))
+        // Setup bundle with array of longs containing only recipe id
+        val bundle = Bundle()
+        val arrayWithRecipeId = longArrayOf(recipeId.toString().toLong())
+        bundle.putLongArray("InterActivityData", arrayWithRecipeId)
+
+        // Go to recipe details page while transferring bundle
+        startActivity(intentFor<RecipeActivity>("RecipeDetails" to bundle))
     }
 
 
@@ -109,8 +115,13 @@ class RecipeListActivity : ListActivity() {
     // Add new recipe
     fun addRecipe() {
 
-        // Go to empty recipe details page
-        startActivity(intentFor<RecipeActivity>())
+        // Setup bundle with array of longs containing -1 to indicate new recipe
+        val bundle = Bundle()
+        val arrayWithoutRecipeId = longArrayOf(-1)
+        bundle.putLongArray("InterActivityData", arrayWithoutRecipeId)
+
+        // Go to recipe details page while transferring bundle
+        startActivity(intentFor<RecipeActivity>("RecipeDetails" to bundle))
     }
 
 

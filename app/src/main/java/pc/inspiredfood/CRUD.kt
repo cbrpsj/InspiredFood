@@ -321,17 +321,17 @@ object CRUD {
 
 
     // READ List of recipe timers
-    fun getRecipeTimers(recipeId: Int): MutableList<Pair<String, Int>> {
+    fun getRecipeTimers(recipeId: Int): MutableList<Triple<Int, String, Int>> {
 
-        var timers: List<Pair<String, Int>> = mutableListOf()
+        var timers: List<Triple<Int, String, Int>> = mutableListOf()
 
         RecipeDBHelper.instance.use {
 
             timers = select(
                     C.TimersTable.tableName,
-                    C.TimersTable.timerName, C.TimersTable.minutes)
+                    C.TimersTable.id, C.TimersTable.timerName, C.TimersTable.minutes)
                     .where("$recipeId = ${C.TimersTable.tableName}.${C.TimersTable.recipeId}")
-                    .parseList(rowParser { name: String, mins: Int -> Pair(name, mins) })
+                    .parseList(rowParser { id: Int, name: String, mins: Int -> Triple(id, name, mins) })
         }
 
         return timers.toMutableList()

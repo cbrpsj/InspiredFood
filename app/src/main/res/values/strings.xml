@@ -20,11 +20,14 @@
     <string name="timers">Timers</string>
     <string name="timer_start">Start</string>
     <string name="timer_reset">Reset</string>
-    <string name="timer_nameless">Timer expired!</string>
-    <string name="timer_expired">" timer expired!"</string>
+    <string name="timer_expired_headline">Timer expired!</string>
+    <string name="timer_nameless_expired">Unnamed timer done.</string>
+    <string name="timer_expired">" done."</string>
     <string name="delete">Delete</string>
     <string name="recipe_name_error">Error! Recipe name missing</string>
+    <string name="no_of_people_error">Error! Number of people has to be between 1 and 20</string>
     <string name="ingredient_error">Error! Ingredient has empty fields</string>
+    <string name="ingredient_amount_error">Error! Ingredient amount has to be less than 1000</string>
     <string name="timer_error">Error! Timer has empty fields</string>
     <string name="hint_recipe_name"><small><i>Recipe name</i></small></string>
     <string name="hint_ingredient"><small><i>Ingredient</i></small></string>
