@@ -23,12 +23,16 @@
     <string name="timer_nameless_expired">Unavngiven timer færdig.</string>
     <string name="timer_expired">" færdig."</string>
     <string name="send_sms">Send SMS</string>
+    <string name="sms_end_of_ingredients">slut</string>
     <string name="delete">Slet</string>
     <string name="recipe_name_error">Fejl! Opskriftnavn mangler</string>
     <string name="no_of_people_error">Fejl! Antal af personer skal være mellem 1 og 20</string>
     <string name="ingredient_error">Fejl! Ingrediens har tomme felter</string>
     <string name="ingredient_amount_error">Fejl! Ingrediensmængde skal være mindre end 1000</string>
     <string name="timer_error">Fejl! Timer har tomme felter</string>
+    <string name="phone_number_missing_error">Fejl! Telefonnummer mangler</string>
+    <string name="phone_number_invalid_error">Fejl! Telefonnummer skal være på 8-12 cifre</string>
+    <string name="sms_ingredient_list_error">Fejl! Opskrift har ingen ingredienser at sende</string>
     <string name="hint_recipe_name"><small><i>Opskriftnavn</i></small></string>
     <string name="hint_ingredient"><small><i>Ingrediens</i></small></string>
     <string name="hint_amount"><small><i>Mængde</i></small></string>

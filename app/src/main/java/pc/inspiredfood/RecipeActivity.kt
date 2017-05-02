@@ -9,11 +9,13 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.SystemClock
 import android.os.Vibrator
+import android.util.Log
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.widget.*
 import kotlinx.android.synthetic.main.activity_recipe.*
 import org.jetbrains.anko.*
+import org.jetbrains.anko.custom.async
 import pc.inspiredfood.App.Companion.categories
 import pc.inspiredfood.App.Companion.updateRecipeList
 import pc.inspiredfood.CRUD.createEmptyRecipe
@@ -35,28 +37,24 @@ import pc.inspiredfood.CRUD.updateNoOfPeople
 import pc.inspiredfood.CRUD.updatePreparation
 import pc.inspiredfood.CRUD.updateRecipeCategory
 import pc.inspiredfood.CRUD.updateRecipeName
+import pc.inspiredfood.R.string.ingredients
 import java.text.NumberFormat
 
-class RecipeActivity : Activity() {
+class RecipeActivity : Activity(), AnkoLogger {
 
     val maxNoOfPeople = 20                  // App design is based on 20 as highest number of people
     val maxAmountValue: Double = 999.9999   // App design is based on 999.9999 as highest ingredient amount in edit mode
     var id = 0
     var editModeEnabled = false
-    var noOfPeoples = 2
+    var noOfPeople = 2
     var ingredientsInRecipe = mutableListOf<Triple<String, Double, String>>()
-
-    // Holds alarm sound type
-    lateinit var alarmSound: Uri
-        private set
-
-    // Holds ringtone
-    lateinit var ringtone: Ringtone
-        private set
 
     // Holds long pressed table row view
     lateinit var tableRowView: View
         private set
+
+    // Holds sound effect for timer alarm
+    var alarmSound: Ringtone? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,9 +62,17 @@ class RecipeActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_recipe)
 
-        // Setup ringtone with alarm sound
-        alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
-        ringtone = RingtoneManager.getRingtone(applicationContext, alarmSound)
+        // Setup sound effect for timer alarm
+        try {
+
+            val uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+            alarmSound = RingtoneManager.getRingtone(applicationContext, uri)
+        }
+        catch (e: Exception){
+
+            alarmSound = null
+            info("$e. Error loading alarm sound.")
+        }
 
         // Retrieve bundle holding long array from previous activity
         val bundle = intent.getBundleExtra(C.recipeDataBundle)
@@ -89,9 +95,10 @@ class RecipeActivity : Activity() {
             makeViewsUneditable()
         }
 
-        // Set event listener for edit/save button
+        // Set event listener for edit/save, cancel and SMS button
         button_edit_save.onClick { toggleEditMode() }
         button_cancel.onClick { cancelEditRecipe() }
+        button_send_sms.onClick { sendSms() }
     }
 
 
@@ -140,12 +147,12 @@ class RecipeActivity : Activity() {
         setupSpinner()
 
         // Find number of people for this recipe and display in UI
-        noOfPeoples = getNoOfPeople(id)
+        noOfPeople = getNoOfPeople(id)
 
-        no_of_persons.setText(noOfPeoples.toString())
+        no_of_persons.setText(noOfPeople.toString())
 
         person_text.text =
-                if (noOfPeoples < 2) getString(R.string.recipe_info_person)
+                if (noOfPeople < 2) getString(R.string.recipe_info_person)
                 else getString(R.string.recipe_info_persons)
 
         // Listen for click on Done button on soft keyboard
@@ -530,10 +537,10 @@ class RecipeActivity : Activity() {
                 if(name.isEmpty()) getString(R.string.timer_nameless_expired)
                 else name + getString(R.string.timer_expired)
 
-            // Setup a timer alert message
+            // Setup timer alert message and OK button
             val alertDialog = alert(msg, getString(R.string.timer_expired_headline)) {
 
-                positiveButton(getString(R.string.ok)) { ringtone.stop() }
+                positiveButton(getString(R.string.ok)) { alarmSound?.stop() }
             }
 
             // Display alert and set text color and text size
@@ -546,7 +553,8 @@ class RecipeActivity : Activity() {
             // Vibrate the phone, if possible
             val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
 
-            ringtone.play()
+            // Play custom alarm sound
+            alarmSound?.play()
 
             // Vibrate to alert the user of expired timer
             if (vibrator.hasVibrator())
@@ -556,6 +564,59 @@ class RecipeActivity : Activity() {
 
 
     fun minutesToMillisPlusSystemTime(minutes: Int) = SystemClock.elapsedRealtime() + minutes * 60000
+
+
+    // Event handler for SMS button
+    fun sendSms() {
+
+        // Get entered phone number as string and remove all spaces
+        val phoneNumber = phone_number.text.toString().replace(" ", "")
+
+        // Check for empty phone number
+        if (phoneNumber.isEmpty()) {
+
+            longToast(getString(R.string.phone_number_missing_error))
+            return
+        }
+
+        // Use regex to check for optional plus sign and 8 to 12 digits
+        val regex = Regex("""^\+?\d{8,12}$""")
+
+        if (!regex.matches(phoneNumber)) {
+
+            longToast(getString(R.string.phone_number_invalid_error))
+            return
+        }
+
+        phone_number.clearFocus()
+
+        // Check for empty ingredient list in recipe
+        if (ingredientsInRecipe.isEmpty()) {
+
+            longToast(getString(R.string.sms_ingredient_list_error))
+            return
+        }
+
+        // Send recipe ingredient list to recipient phone number as SMS
+        sendSMS(phoneNumber, convertIngredientsToSmsString())
+    }
+
+
+    // Convert recipe ingredient list to a single string (for SMS)
+    fun convertIngredientsToSmsString(): String {
+
+        // Get recipe name and ingredients headlines
+        var sms = "*** ${recipe_name.text} ***\n${getString(R.string.ingredients)}:\n"
+
+        // Get name, amount and unit of each ingredient line
+        for (ingredientLine in ingredientsInRecipe)
+            sms += "  ${ingredientLine.first} ${formatAmount(ingredientLine.second)} ${ingredientLine.third}\n"
+
+        // Recipe name followed by 'end' marks the end of SMS string
+        sms += "*** ${recipe_name.text} ${getString(R.string.sms_end_of_ingredients)} ***\n"
+
+        return sms
+    }
 
 
     // Toggle between edit mode and read-only mode
@@ -759,7 +820,7 @@ class RecipeActivity : Activity() {
             return false
         }
 
-        noOfPeoples = noOfPeopleInt
+        noOfPeople = noOfPeopleInt
 
         if (id == -1)
             id = createEmptyRecipe()
@@ -836,7 +897,7 @@ class RecipeActivity : Activity() {
         // Update recipe name, category, no of people and preparation in DB
         updateRecipeName(id, recipe_name.text.toString())
         updateRecipeCategory(id, spinner.selectedItemPosition + 1)
-        updateNoOfPeople(id, noOfPeoples)
+        updateNoOfPeople(id, noOfPeople)
         updatePreparation(id, recipe_preparation.text.toString())
 
         // Delete all previous ingredients in recipe, afterwards add all ingredients from UI to DB
@@ -867,7 +928,7 @@ class RecipeActivity : Activity() {
         val newNoOfPeopleString = no_of_persons.text.toString()
 
         // If reset true, reset no of people from db. If empty or 0, set to 2, else set to user input
-        val newNoOfPeopleInt =  if (reset) noOfPeoples
+        val newNoOfPeopleInt =  if (reset) noOfPeople
                                 else if (newNoOfPeopleString.isEmpty() || newNoOfPeopleString.toInt() < 1) 2
                                 else newNoOfPeopleString.toInt()
 
@@ -907,8 +968,8 @@ class RecipeActivity : Activity() {
 
     // Calculate ingredient amount based on number of people entered by user
     fun calculateAmount(newNoOfPeople: Int, amount: Double) =
-            if (newNoOfPeople == noOfPeoples) formatAmount(amount)
-            else formatAmount((amount / noOfPeoples) * newNoOfPeople)
+            if (newNoOfPeople == noOfPeople) formatAmount(amount)
+            else formatAmount((amount / noOfPeople) * newNoOfPeople)
 
 
     // Convert amount (Double) to a string with between 0 - 2 decimals

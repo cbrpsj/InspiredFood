@@ -12,7 +12,7 @@
         android:id="@+id/splash_screen"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:src="@mipmap/splash_logo"
+        android:src="@raw/splash_logo"
         tools:ignore="ContentDescription"
         android:layout_gravity="center"/>
 
