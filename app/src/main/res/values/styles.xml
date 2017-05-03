@@ -2,7 +2,6 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -15,7 +14,7 @@
         <item name="android:layout_weight">1</item>
         <item name="android:buttonTint">@color/defaultBlack</item>
         <item name="android:textSize">12.5dp</item>
-        <item name="android:onClick">mainButtonClicked</item>
+        <item name="android:onClick">radioButtonClicked</item>
     </style>
 
     <!-- Custom style for activity headlines -->

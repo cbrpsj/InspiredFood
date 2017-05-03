@@ -40,7 +40,7 @@
     </RelativeLayout>
 
     <RadioGroup
-        android:id="@+id/mainButtons"
+        android:id="@+id/radioButtons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"

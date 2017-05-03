@@ -368,4 +368,9 @@ fun defaultData(db: SQLiteDatabase) {
             C.TimersTable.recipeId to 1,
             C.TimersTable.timerName to "Steg flæskesteg",
             C.TimersTable.minutes to 55)
+
+    db.insert(tableName,
+            C.TimersTable.recipeId to 6,
+            C.TimersTable.timerName to "Brun kød",
+            C.TimersTable.minutes to 1)
 }

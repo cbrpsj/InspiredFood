@@ -23,7 +23,7 @@ class RecipeAdapter(context: Context, val recipes: List<Recipe>):
                 .from(context)
                 .inflate(R.layout.item_recipe, parent, false)
 
-        // Set tag to id (first var in Pair), and display the recipeName in view (second var in Pair)
+        // Set tag to id, and display the recipe name in view
         view.tag = recipe.id
         view.text_recipe_main.text = recipe.name
 

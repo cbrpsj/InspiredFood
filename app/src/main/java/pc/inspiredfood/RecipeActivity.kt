@@ -5,48 +5,26 @@ import android.content.Context
 import android.content.DialogInterface
 import android.media.Ringtone
 import android.media.RingtoneManager
-import android.net.Uri
 import android.os.Bundle
 import android.os.SystemClock
 import android.os.Vibrator
-import android.util.Log
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.widget.*
 import kotlinx.android.synthetic.main.activity_recipe.*
 import org.jetbrains.anko.*
-import org.jetbrains.anko.custom.async
 import pc.inspiredfood.App.Companion.categories
+import pc.inspiredfood.App.Companion.defaultNoOfPeople
 import pc.inspiredfood.App.Companion.updateRecipeList
-import pc.inspiredfood.CRUD.createEmptyRecipe
-import pc.inspiredfood.CRUD.createIngredient
-import pc.inspiredfood.CRUD.createIngredientsInRecipe
-import pc.inspiredfood.CRUD.createTimersInRecipe
-import pc.inspiredfood.CRUD.createUnit
-import pc.inspiredfood.CRUD.deleteIngredientsInRecipe
-import pc.inspiredfood.CRUD.deleteTimersInRecipe
-import pc.inspiredfood.CRUD.getIngredientId
-import pc.inspiredfood.CRUD.getPreparation
-import pc.inspiredfood.CRUD.getIngredientsInRecipe
-import pc.inspiredfood.CRUD.getNoOfPeople
-import pc.inspiredfood.CRUD.getRecipeCategory
-import pc.inspiredfood.CRUD.getRecipeName
-import pc.inspiredfood.CRUD.getRecipeTimers
-import pc.inspiredfood.CRUD.getUnitId
-import pc.inspiredfood.CRUD.updateNoOfPeople
-import pc.inspiredfood.CRUD.updatePreparation
-import pc.inspiredfood.CRUD.updateRecipeCategory
-import pc.inspiredfood.CRUD.updateRecipeName
-import pc.inspiredfood.R.string.ingredients
 import java.text.NumberFormat
 
 class RecipeActivity : Activity() {
 
     val maxNoOfPeople = 20                  // App design is based on 20 as highest number of people
     val maxAmountValue: Double = 999.9999   // App design is based on 999.9999 as highest ingredient amount in edit mode
-    var id = 0
+    var id = 0                              // Holds recipe id selected in previous activity or -1 for new recipe
     var editModeEnabled = false
-    var noOfPeople = 2
+    var noOfPeople = defaultNoOfPeople
     var ingredientsInRecipe = mutableListOf<Triple<String, Double, String>>()
 
     // Holds long pressed table row view
@@ -61,18 +39,6 @@ class RecipeActivity : Activity() {
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_recipe)
-
-        // Setup sound effect for timer alarm
-        try {
-
-            val uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
-            alarmSound = RingtoneManager.getRingtone(applicationContext, uri)
-        }
-        catch (e: Exception){
-
-            // Sound effect could not be loaded
-            alarmSound = null
-        }
 
         // Retrieve bundle holding long array from previous activity
         val bundle = intent.getBundleExtra(C.recipeDataBundle)
@@ -93,6 +59,18 @@ class RecipeActivity : Activity() {
             setupInfoLine()
             getRecipeDetails(longArray)
             makeViewsUneditable()
+        }
+
+        // Setup sound effect for timer alarm
+        try {
+
+            val uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+            alarmSound = RingtoneManager.getRingtone(applicationContext, uri)
+        }
+        catch (e: Exception){
+
+            // Sound effect could not be loaded
+            alarmSound = null
         }
 
         // Set event listener for edit/save, cancel and SMS button
@@ -147,7 +125,7 @@ class RecipeActivity : Activity() {
         setupSpinner()
 
         // Find number of people for this recipe and display in UI
-        noOfPeople = getNoOfPeople(id)
+        noOfPeople = CRUD.getNoOfPeople(id)
 
         no_of_persons.setText(noOfPeople.toString())
 
@@ -165,7 +143,6 @@ class RecipeActivity : Activity() {
                 updatePersonTextAndIngredientAmounts(false)
                 true
             }
-
             else false
         }
 
@@ -208,26 +185,30 @@ class RecipeActivity : Activity() {
     // Get details about a specific recipe and map to UI
     fun getRecipeDetails(timerDataArray: LongArray) {
 
-        recipe_name.setText(getRecipeName(id))
-        recipe_preparation.setText(getPreparation(id))
+        recipe_name.setText(CRUD.getRecipeName(id))
+        recipe_preparation.setText(CRUD.getPreparation(id))
 
         // Map ingredient lines to UI
-        ingredientsInRecipe = getIngredientsInRecipe(id)
+        ingredientsInRecipe = CRUD.getIngredientsInRecipe(id)
 
         for(ingredientLine in ingredientsInRecipe)
             createIngredientTableRow(ingredientLine)
 
         // Map timer lines to UI
-        val timersInRecipe = getRecipeTimers(id)
+        val timersInRecipe = CRUD.getRecipeTimers(id)
 
+        // Remove timer headline if no timers present
         if (timersInRecipe.isEmpty())
             timer_headline.visibility = View.INVISIBLE
         else {
 
+            // Otherwise make timer headline visible
             timer_headline.visibility = View.VISIBLE
 
+            // Create a table row for each timer
             for (timer in timersInRecipe) {
 
+                // Check if timer is persistent (has survived cancellation of edit mode)
                 var persistentTimer: Long? = null
 
                 for (i in 1..timerDataArray.lastIndex step 2)
@@ -541,20 +522,19 @@ class RecipeActivity : Activity() {
             val alertDialog = alert(msg, getString(R.string.timer_expired_headline)) {
 
                 positiveButton(getString(R.string.ok)) { alarmSound?.stop() }
-            }
+            }.show()
 
-            // Display alert and set text color and text size
-            alertDialog.show()
+            // Set text color and text size for alert dialog
             alertDialog.dialog?.setCanceledOnTouchOutside(false)
             alertDialog.dialog?.getButton(DialogInterface.BUTTON_POSITIVE)?.textColor = getColor(R.color.textColorListCellPreparation)
             alertDialog.dialog?.getButton(DialogInterface.BUTTON_POSITIVE)?.textSize = 22f
             (alertDialog.dialog?.findViewById(android.R.id.message) as TextView).textSize = 20f
 
-            // Vibrate the phone, if possible
-            val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-
             // Play custom alarm sound
             alarmSound?.play()
+
+            // Vibrate the phone, if possible
+            val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
 
             // Vibrate to alert the user of expired timer
             if (vibrator.hasVibrator())
@@ -579,8 +559,8 @@ class RecipeActivity : Activity() {
             return
         }
 
-        // Use regex to check for optional plus sign and 8 to 12 digits
-        val regex = Regex("""^\+?\d{8,12}$""")
+        // Use regex to check for optional plus sign and min and max number of digits
+        val regex = Regex("""^\+?\d{8,16}$""")
 
         if (!regex.matches(phoneNumber)) {
 
@@ -624,14 +604,17 @@ class RecipeActivity : Activity() {
             }
 
             // If ingredient was unique, add it to new list
-            if (foundIndex == -1)
-                tmpIngredientsList.add(ingredientLine)
+            if (foundIndex == -1) {
 
+                var (name, amount, unit) = ingredientLine
+                amount = calculateAmount(no_of_persons.text.toString().toInt(), ingredientLine.second).toDouble()
+                tmpIngredientsList.add(Triple(name, amount, unit))
+            }
             // Otherwise, update relevant amount in new list
             else {
 
                 var (name, amount, unit) = tmpIngredientsList[foundIndex]
-                amount += ingredientLine.second
+                amount += calculateAmount(no_of_persons.text.toString().toInt(), ingredientLine.second).toDouble()
                 tmpIngredientsList[foundIndex] = Triple(name, amount, unit)
             }
         }
@@ -689,6 +672,7 @@ class RecipeActivity : Activity() {
         // Create empty table row at bottom of timer table for new timer
         createTimerTableRow(null, null)
 
+        sms_headline.visibility = View.GONE
         phone_number.visibility = View.GONE
         button_send_sms.visibility = View.GONE
 
@@ -699,9 +683,6 @@ class RecipeActivity : Activity() {
 
     // Exit edit mode, dismiss changes and return to previous activity
     fun cancelEditRecipe() {
-
-        // End Recipe Activity
-        finish()
 
         // When not a new recipe, restart current activity
         if (id != -1) {
@@ -727,6 +708,9 @@ class RecipeActivity : Activity() {
 
             startActivity(intentFor<RecipeActivity>(C.recipeDataBundle to bundle))
         }
+
+        // End Recipe Activity
+        finish()
     }
 
 
@@ -743,6 +727,7 @@ class RecipeActivity : Activity() {
         recipe_name.background = getDrawable(R.drawable.edit_text_default_background)
         no_of_persons.clearFocus()
 
+        sms_headline.visibility = View.VISIBLE
         phone_number.visibility = View.VISIBLE
         button_send_sms.visibility = View.VISIBLE
 
@@ -855,7 +840,7 @@ class RecipeActivity : Activity() {
         noOfPeople = noOfPeopleInt
 
         if (id == -1)
-            id = createEmptyRecipe()
+            id = CRUD.createEmptyRecipe()
 
 
         // Find all table rows in ingredients table layout
@@ -894,12 +879,12 @@ class RecipeActivity : Activity() {
             (tableRow.getChildAt(1) as EditText).setText(formatAmount(amount))
 
             // Create potentially new ingredient and unit in DB
-            createIngredient(ingredientName)
-            createUnit(unitName)
+            CRUD.createIngredient(ingredientName)
+            CRUD.createUnit(unitName)
 
             // Get ingredientId and unitId from DB
-            val ingredientId = getIngredientId(ingredientName)
-            val unitId = getUnitId(unitName)
+            val ingredientId = CRUD.getIngredientId(ingredientName)
+            val unitId = CRUD.getUnitId(unitName)
 
             // Add ingredient to list of ingredients in recipe
             tmpIngredientsInRecipe.add(Triple(ingredientId, amount, unitId))
@@ -927,20 +912,20 @@ class RecipeActivity : Activity() {
         }
 
         // Update recipe name, category, no of people and preparation in DB
-        updateRecipeName(id, recipe_name.text.toString())
-        updateRecipeCategory(id, spinner.selectedItemPosition + 1)
-        updateNoOfPeople(id, noOfPeople)
-        updatePreparation(id, recipe_preparation.text.toString())
+        CRUD.updateRecipeName(id, recipe_name.text.toString())
+        CRUD.updateRecipeCategory(id, spinner.selectedItemPosition + 1)
+        CRUD.updateNoOfPeople(id, noOfPeople)
+        CRUD.updatePreparation(id, recipe_preparation.text.toString())
 
         // Delete all previous ingredients in recipe, afterwards add all ingredients from UI to DB
-        deleteIngredientsInRecipe(id)
-        createIngredientsInRecipe(id, tmpIngredientsInRecipe)
+        CRUD.deleteIngredientsInRecipe(id)
+        CRUD.createIngredientsInRecipe(id, tmpIngredientsInRecipe)
 
-        ingredientsInRecipe = getIngredientsInRecipe(id)
+        ingredientsInRecipe = CRUD.getIngredientsInRecipe(id)
 
         // Delete all previous timers in recipe, afterwards add all timers from UI to DB
-        deleteTimersInRecipe(id)
-        createTimersInRecipe(id, tmpTimersInRecipe)
+        CRUD.deleteTimersInRecipe(id)
+        CRUD.createTimersInRecipe(id, tmpTimersInRecipe)
 
         // If no timers left, then remove timer headline
         timer_headline.visibility =
@@ -959,9 +944,9 @@ class RecipeActivity : Activity() {
         // Find the updated number of people (string) from user input
         val newNoOfPeopleString = no_of_persons.text.toString()
 
-        // If reset true, reset no of people from db. If empty or 0, set to 2, else set to user input
+        // If reset true, reset no of people from DB. If empty or 0, set to default, else set to user input
         val newNoOfPeopleInt =  if (reset) noOfPeople
-                                else if (newNoOfPeopleString.isEmpty() || newNoOfPeopleString.toInt() < 1) 2
+                                else if (newNoOfPeopleString.isEmpty() || newNoOfPeopleString.toInt() < 1) defaultNoOfPeople
                                 else newNoOfPeopleString.toInt()
 
         // Display new number of people in UI
@@ -992,9 +977,9 @@ class RecipeActivity : Activity() {
 
         if (id != -1)
             for (i in categories.indices)
-                if (getRecipeCategory(id) == categories[i]) return i
+                if (CRUD.getRecipeCategory(id) == categories[i]) return i
 
-        return 1 // default main course - used for new recipes
+        return 1 // Default main course - used for new recipes
     }
 
 

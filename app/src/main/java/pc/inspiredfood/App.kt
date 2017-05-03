@@ -14,6 +14,8 @@ class App : Application() {
         var units = hashSetOf<String>()
         var ingredients = hashSetOf<String>()
         var categories = listOf<String>()
+
+        val defaultNoOfPeople = 2
     }
 
 

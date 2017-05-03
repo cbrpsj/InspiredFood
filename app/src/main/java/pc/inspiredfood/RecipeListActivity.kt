@@ -2,24 +2,15 @@ package pc.inspiredfood
 
 import android.app.ListActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.ContextMenu
 import android.view.MenuItem
 import android.view.View
-import android.widget.AdapterView
 import android.widget.AdapterView.AdapterContextMenuInfo
 import android.widget.ListView
 import kotlinx.android.synthetic.main.activity_recipe_list.*
-import org.jetbrains.anko.contentView
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.onClick
-import org.jetbrains.anko.toast
 import pc.inspiredfood.App.Companion.updateRecipeList
-import pc.inspiredfood.CRUD.deleteRecipe
-import pc.inspiredfood.CRUD.getCategories
-import pc.inspiredfood.CRUD.getIngredients
-import pc.inspiredfood.CRUD.getRecipes
-import pc.inspiredfood.CRUD.getUnits
 
 
 class RecipeListActivity : ListActivity() {
@@ -34,11 +25,13 @@ class RecipeListActivity : ListActivity() {
         // Enables menu on long press
         registerForContextMenu(list)
 
+        // Ensure that list of recipes will be updated from DB
         updateRecipeList = true
-        mainButtons.check(all.id)
 
-        getCategories()
+        // Set default radio button to all recipes
+        radioButtons.check(all.id)
 
+        CRUD.getCategories()
         button_add.onClick { addRecipe() }
     }
 
@@ -49,13 +42,14 @@ class RecipeListActivity : ListActivity() {
 
         if (updateRecipeList) {
 
-            getIngredients()
-            getUnits()
+            CRUD.getIngredients()
+            CRUD.getUnits()
 
-            recipes = getRecipes()
+            recipes = CRUD.getRecipes()
             updateRecipeList = false
         }
 
+        // Filter recipes based on selected radio button and update list view
         filterRecipes()
     }
 
@@ -63,6 +57,7 @@ class RecipeListActivity : ListActivity() {
     // Event handler for click on recipe
     override fun onListItemClick(listView: ListView, view: View, position: Int, id: Long) {
 
+        // Get tag containing recipe id from selected list item
         val recipeId = view.tag
 
         // Update popularity counter for the chosen recipe
@@ -93,9 +88,9 @@ class RecipeListActivity : ListActivity() {
         val info = item?.menuInfo as AdapterContextMenuInfo
         val recipe = list.getItemAtPosition(info.position) as Recipe
 
-        // Remove recipe from local list and db
+        // Remove recipe from local list and DB
         recipes.remove(recipe)
-        deleteRecipe(recipe.id)
+        CRUD.deleteRecipe(recipe.id)
 
         // Filter recipes based on selected radio button and update list view
         filterRecipes()
@@ -105,7 +100,7 @@ class RecipeListActivity : ListActivity() {
 
 
     // Radio button event handler
-    fun mainButtonClicked(view: View) {
+    fun radioButtonClicked(view: View) {
 
         // Filter recipes based on selected radio button and update list view
         filterRecipes()
@@ -115,12 +110,13 @@ class RecipeListActivity : ListActivity() {
     // Filter recipes (sorted alphabetically) based on selected radio button and update list view
     fun filterRecipes() {
 
-        val buttonChecked = mainButtons.checkedRadioButtonId
+        val buttonChecked = radioButtons.checkedRadioButtonId
         recipes.sortBy { it.name }
 
         val tempList: List<Recipe>
 
         when(buttonChecked) {
+
             starters.id -> tempList = recipes.filter { it.category == 1 }
             mains.id -> tempList = recipes.filter { it.category == 2 }
             desserts.id -> tempList = recipes.filter { it.category == 3 }
@@ -129,7 +125,7 @@ class RecipeListActivity : ListActivity() {
         }
 
         // Map data from tempList to list view
-        listAdapter = RecipeAdapter(this@RecipeListActivity, tempList)
+        listAdapter = RecipeAdapter(this, tempList)
     }
 
 

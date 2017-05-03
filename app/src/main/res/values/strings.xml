@@ -24,6 +24,7 @@
     <string name="timer_nameless_expired">Unnamed timer done.</string>
     <string name="timer_expired">" done."</string>
     <string name="ok">OK</string>
+    <string name="sms_headline">Send shopping list</string>
     <string name="send_sms">Send SMS</string>
     <string name="sms_end_of_ingredients">end</string>
     <string name="delete">Delete</string>
@@ -33,7 +34,7 @@
     <string name="ingredient_amount_error">Error! Ingredient amount has to be less than 1000</string>
     <string name="timer_error">Error! Timer has empty fields</string>
     <string name="phone_number_missing_error">Error! Phone number missing</string>
-    <string name="phone_number_invalid_error">Error! Phone number must have 8-12 digits</string>
+    <string name="phone_number_invalid_error">Error! Phone number must have 8&#8212;16 digits</string>
     <string name="sms_ingredient_list_error">Error! Recipe has no ingredients to send</string>
     <string name="hint_recipe_name"><small><i>Recipe name</i></small></string>
     <string name="hint_ingredient"><small><i>Ingredient</i></small></string>

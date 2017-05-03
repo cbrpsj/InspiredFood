@@ -10,7 +10,7 @@ object TableRowFactory {
     fun createIngredientTableRow(context: Context): TableRow {
 
         // Setup inflater, and inflate custom ingredient table row
-        val inflater = context.applicationContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val tableRow = inflater.inflate(R.layout.table_row_ingredient, null) as TableRow
 
         // Find autocomplete views in custom table row and cast to correct types
@@ -31,7 +31,7 @@ object TableRowFactory {
     fun createTimerTableRow(context: Context): TableRow {
 
         // Setup inflater, and inflate custom timer table row
-        val inflater = context.applicationContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val tableRow = inflater.inflate(R.layout.table_row_timer, null) as TableRow
 
         return tableRow

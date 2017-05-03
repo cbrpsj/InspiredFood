@@ -5,9 +5,9 @@ import org.jetbrains.anko.db.rowParser
 import org.jetbrains.anko.db.select
 import org.jetbrains.anko.db.*
 import pc.inspiredfood.App.Companion.categories
+import pc.inspiredfood.App.Companion.defaultNoOfPeople
 import pc.inspiredfood.App.Companion.ingredients
 import pc.inspiredfood.App.Companion.units
-
 
 
 object CRUD {
@@ -71,19 +71,6 @@ object CRUD {
     }
 
 
-    // CREATE Single timer
-    fun createTimer(recipeId: Int, timerName: String, minutes: Int) {
-
-        RecipeDBHelper.instance.use {
-
-            insert(C.TimersTable.tableName,
-                    C.TimersTable.recipeId to recipeId,
-                    C.TimersTable.timerName to timerName,
-                    C.TimersTable.minutes to minutes)
-        }
-    }
-
-
     // CREATE Several ingredients in a specific recipe
     fun createIngredientsInRecipe(recipeId: Int, ingredients: List<Triple<Int, Double, Int>>) {
 
@@ -119,7 +106,6 @@ object CRUD {
 
 
     /********* READ Operations: *********/
-
 
     // READ single ingredient id
     fun getIngredientId(ingredient: String): Int {
@@ -160,7 +146,7 @@ object CRUD {
 
         RecipeDBHelper.instance.use {
 
-            select(C.RecipesTable.tableName, C.RecipesTable.recipeName)
+            select( C.RecipesTable.tableName, C.RecipesTable.recipeName)
                     .where( "$recipeId = ${C.RecipesTable.tableName}.${C.RecipesTable.id}")
                     .parseSingle( rowParser { name: String -> recipeName = name })
         }
@@ -176,7 +162,7 @@ object CRUD {
 
         RecipeDBHelper.instance.use {
 
-            select(C.RecipesTable.tableName+","+C.CategoriesTable.tableName, C.CategoriesTable.categoryName)
+            select( C.RecipesTable.tableName+","+C.CategoriesTable.tableName, C.CategoriesTable.categoryName)
                     .where( "$recipeId = ${C.RecipesTable.tableName}.${C.RecipesTable.id} and " +
                             "${C.RecipesTable.tableName}.${C.RecipesTable.category} = " +
                             "${C.CategoriesTable.tableName}.${C.CategoriesTable.id}")
@@ -194,7 +180,7 @@ object CRUD {
 
         RecipeDBHelper.instance.use {
 
-            select(C.RecipesTable.tableName, C.RecipesTable.preparation)
+            select( C.RecipesTable.tableName, C.RecipesTable.preparation)
                     .where( "$recipeId = ${C.RecipesTable.tableName}.${C.RecipesTable.id}")
                     .parseSingle( rowParser { prep: String -> preparation = prep })
         }
@@ -206,11 +192,11 @@ object CRUD {
     // READ Single number of people
     fun getNoOfPeople(recipeId: Int): Int {
 
-        var noOfPeople = 2 // Default value
+        var noOfPeople = defaultNoOfPeople
 
         RecipeDBHelper.instance.use {
 
-            select(C.RecipesTable.tableName, C.RecipesTable.numberOfPeople)
+            select( C.RecipesTable.tableName, C.RecipesTable.numberOfPeople)
                     .where( "$recipeId = ${C.RecipesTable.tableName}.${C.RecipesTable.id}")
                     .parseOpt( rowParser { no: Int -> noOfPeople = no })
         }
@@ -226,7 +212,7 @@ object CRUD {
 
         RecipeDBHelper.instance.use {
 
-            // Create a row parser (parse all fields, and return two of them as a Pair)
+            // Create a row parser (parse all fields into a recipe)
             val parser = rowParser {
                 id: Int,
                 name: String,
@@ -234,7 +220,7 @@ object CRUD {
                 popularity: Int -> Recipe(id, name, category, popularity)
             }
 
-            // Query db for all recipes, orderBy recipeName and parse the result to a list
+            // Query DB for all recipes, order by recipe name and parse the result to a list
             recipes = select(C.RecipesTable.tableName,
                     C.RecipesTable.id, C.RecipesTable.recipeName,
                     C.RecipesTable.category, C.RecipesTable.popularity)
@@ -338,15 +324,15 @@ object CRUD {
     }
 
 
-    /********* UPDATE Operations: *********/
 
+    /********* UPDATE Operations: *********/
 
     // UPDATE Single recipe popularity
     fun updatePopularity(recipeId: Int, popularity: Int) {
 
         RecipeDBHelper.instance.use {
 
-            update(C.RecipesTable.tableName, C.RecipesTable.popularity to popularity)
+            update( C.RecipesTable.tableName, C.RecipesTable.popularity to popularity)
                     .where("${C.RecipesTable.id} = $recipeId")
                     .exec()
         }
@@ -403,7 +389,6 @@ object CRUD {
 
 
     /******** DELETE Operations: *********/
-
 
     // DELETE Single recipe
     fun deleteRecipe(recipeId: Int) {
