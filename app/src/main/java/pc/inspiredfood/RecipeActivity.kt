@@ -40,7 +40,7 @@ import pc.inspiredfood.CRUD.updateRecipeName
 import pc.inspiredfood.R.string.ingredients
 import java.text.NumberFormat
 
-class RecipeActivity : Activity(), AnkoLogger {
+class RecipeActivity : Activity() {
 
     val maxNoOfPeople = 20                  // App design is based on 20 as highest number of people
     val maxAmountValue: Double = 999.9999   // App design is based on 999.9999 as highest ingredient amount in edit mode
@@ -70,8 +70,8 @@ class RecipeActivity : Activity(), AnkoLogger {
         }
         catch (e: Exception){
 
+            // Sound effect could not be loaded
             alarmSound = null
-            info("$e. Error loading alarm sound.")
         }
 
         // Retrieve bundle holding long array from previous activity
@@ -605,12 +605,44 @@ class RecipeActivity : Activity(), AnkoLogger {
     // Convert recipe ingredient list to a single string (for SMS)
     fun convertIngredientsToSmsString(): String {
 
+        // Merge ingredients with same name and unit into a new list
+        val tmpIngredientsList = mutableListOf<Triple<String, Double, String>>()
+
+        for (ingredientLine in ingredientsInRecipe) {
+
+            var foundIndex = -1
+
+            // Check for ingredient with same name and unit i new list
+            for ((index, tmpIngredientLine) in tmpIngredientsList.withIndex()) {
+
+                if (tmpIngredientLine.first == ingredientLine.first
+                        && tmpIngredientLine.third == ingredientLine.third) {
+
+                    foundIndex = index
+                    break
+                }
+            }
+
+            // If ingredient was unique, add it to new list
+            if (foundIndex == -1)
+                tmpIngredientsList.add(ingredientLine)
+
+            // Otherwise, update relevant amount in new list
+            else {
+
+                var (name, amount, unit) = tmpIngredientsList[foundIndex]
+                amount += ingredientLine.second
+                tmpIngredientsList[foundIndex] = Triple(name, amount, unit)
+            }
+        }
+
+
         // Get recipe name and ingredients headlines
         var sms = "*** ${recipe_name.text} ***\n${getString(R.string.ingredients)}:\n"
 
         // Get name, amount and unit of each ingredient line
-        for (ingredientLine in ingredientsInRecipe)
-            sms += "  ${ingredientLine.first} ${formatAmount(ingredientLine.second)} ${ingredientLine.third}\n"
+        for (tmpIngredientLine in tmpIngredientsList)
+            sms += "  ${tmpIngredientLine.first} ${formatAmount(tmpIngredientLine.second)} ${tmpIngredientLine.third}\n"
 
         // Recipe name followed by 'end' marks the end of SMS string
         sms += "*** ${recipe_name.text} ${getString(R.string.sms_end_of_ingredients)} ***\n"
