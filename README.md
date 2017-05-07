@@ -1,9 +1,9 @@
 ![Logo](Images/Logo.png)
 
-** Fag:	Programmering af mobile enheder **
-** Hold:	s17apme1pab1 **
-** Vejleder:	Anders Kalhauge **
-** Deltagere:	Pia Jensen & Carsten Brandt **
+**Fag:	Programmering af mobile enheder**
+**Hold:	s17apme1pab1**
+**Vejleder:	Anders Kalhauge**
+**Deltagere:	Pia Jensen & Carsten Brandt**
 
 
 # Problemformulering
