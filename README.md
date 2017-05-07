@@ -51,11 +51,11 @@ Endelig har man i hovedskærmbilledet også mulighed for at slette en madret i l
 
 ### Filtrér opskrifter
 Hovedskærmen giver endvidere mulighed for filtrering af opskrifterne. Det gøres ved at trykke på én af de 5 ”radio buttons”, som medfører følgende visninger:
--	Forretter – kun retter markeret som forretter vises.
--	Hovedretter – kun hovedretter vises.
--	Desserter – kun desserter vises.
--	Favoritter – alle retter sorteres efter hvor hyppigt, man har valgt dem, og præsenteres i faldende orden startende med den mest populære ret.
--	Alle – alle madretter vises.
+-	Forretter – kun retter markeret som forretter vises
+-	Hovedretter – kun hovedretter vises
+-	Desserter – kun desserter vises
+-	Favoritter – alle retter sorteres efter hvor hyppigt, man har valgt dem, og præsenteres i faldende orden startende med den mest populære ret
+-	Alle – alle madretter vises
 
 Alle visninger på nær Favoritter er desuden sorteret alfabetisk.
 
@@ -107,7 +107,7 @@ Vi har valgt at lægge forskellige centrale dele ud i særskilte klasser for at 
 Nogle eksempler på dette er:
 -	Vores CRUD-objekt, der håndterer alle operationer til og fra databasen
 -	Database-objektet, der indeholder selve databasens data og struktur
--	Factory-objektet, der håndterer dannelse af nye tabelrækker til henholdsvis ingredienser og timere.
+-	Factory-objektet, der håndterer dannelse af nye tabelrækker til henholdsvis ingredienser og timere
 
 ## Database
 Vi har valgt at gemme alle opskriftsdata i en lokal database i stedet for blot at opbevare dem i variabler, som så skrives ned i en fil. Vi har designet databasen, så dataene splittes op i flest mulige tabeller for at undgå redundans og gøre det nemt at rette i dem senere. Valget af SQLite som lagrings-løsning vil også gøre det nemmere at videreudvikle app’en til senere at bruge en fuld SQL-database på nettet, så opskrifter eksempelvis kan deles mellem brugere.
