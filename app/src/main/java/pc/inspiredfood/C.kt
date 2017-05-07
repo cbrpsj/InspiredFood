@@ -4,6 +4,11 @@ object C {
 
     val recipeId = "recipeId"
 
+    val timerRunning = "timerRunning"
+    val timerStopped = "timerStopped"
+    val recipeDataArray = "recipeDataArray"
+    val recipeDataBundle = "recipeDataBundle"
+
     val dbName = "Recipes"
 
     object RecipesTable {
@@ -25,6 +30,7 @@ object C {
     object TimersTable {
         val tableName = "TIMERS"
         val id = "_id"
+        val timerName = "timer_name"
         val minutes = "minutes"
         val recipeId = "recipe_id"
     }

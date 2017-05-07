@@ -10,6 +10,12 @@ class App : Application() {
             private set
 
         var updateRecipeList = true
+
+        var units = hashSetOf<String>()
+        var ingredients = hashSetOf<String>()
+        var categories = listOf<String>()
+
+        val defaultNoOfPeople = 2
     }
 
 

@@ -4,15 +4,16 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import org.jetbrains.anko.db.*
 
-class RecipeDBHelper(context: Context = App.instance, version: Int = 16) :
+class RecipeDBHelper(context: Context = App.instance, version: Int = 1) :
         ManagedSQLiteOpenHelper(context, C.dbName, null, version) {
 
+    // Singleton DB instance
     companion object {
-        // Test: uden companion object
         val instance by lazy { RecipeDBHelper() }
     }
 
-    // test: slettet ? efter SQLiteDatabase i onCreate og onUpgrade
+
+    // Create DB structure and insert default data
     override fun onCreate(db: SQLiteDatabase) {
 
         db.createTable(C.CategoriesTable.tableName, true,
@@ -32,6 +33,7 @@ class RecipeDBHelper(context: Context = App.instance, version: Int = 16) :
 
         db.createTable(C.TimersTable.tableName, true,
                 C.TimersTable.id to INTEGER + PRIMARY_KEY + UNIQUE,
+                C.TimersTable.timerName to TEXT,
                 C.TimersTable.minutes to INTEGER,
                 C.TimersTable.recipeId to INTEGER,
                 "" to FOREIGN_KEY(C.TimersTable.recipeId, C.RecipesTable.tableName, C.RecipesTable.id)
@@ -61,6 +63,8 @@ class RecipeDBHelper(context: Context = App.instance, version: Int = 16) :
         defaultData(db)
     }
 
+
+    // When there is a newer DB version, delete all tables and create new DB
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
 
         db.dropTable(C.CategoriesTable.tableName)
