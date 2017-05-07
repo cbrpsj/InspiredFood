@@ -37,6 +37,7 @@ Ved start af app’en vises først en kort splash-skærm med InspiredFood-logoet
 
 ## Hovedmenu
 Efter splash-skærmen kommer man til hovedmenuen, som er delt op i en fast sektion i toppen indeholdende App-navnet og diverse knapper, og en scrollende sektion, hvor alle madretterne vises i en liste:
+
 <img src="Images/Hovedmenu.png" width="300">
 
 ### Vælg opskrift
