@@ -837,12 +837,6 @@ class RecipeActivity : Activity() {
             return false
         }
 
-        noOfPeople = noOfPeopleInt
-
-        if (id == -1)
-            id = CRUD.createEmptyRecipe()
-
-
         // Find all table rows in ingredients table layout
         var ingredientTableRows = ingredients_table.childrenSequence()
 
@@ -857,7 +851,11 @@ class RecipeActivity : Activity() {
         if (!validateTimerTableRow(timerTableRows))
             return false
 
+        noOfPeople = noOfPeopleInt
 
+        if (id == -1)
+            id = CRUD.createEmptyRecipe()
+        
         // Remove last ingredient line if all fields are empty
         if (countEmptyFieldsInIngredientRow(ingredients_table.childCount - 1) == 3) {
 
