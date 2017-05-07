@@ -61,35 +61,35 @@ Alle visninger på nær Favoritter er desuden sorteret alfabetisk.
 ## Opskrift-detaljevisning
 Når man har valgt en opskrift i hovedmenuen, kommer man til detaljesiden, der vises i read-only-mode, hvilket angives med den lysegrå baggrundsfarve. Siden viser opskriftens detaljer:
 
-![Detail](Images/Detaljeside.png)
+<img src="Images/Detaljeside.png" width="300">
 
 ### Ret antal personer
 Man kan ændre antallet af personer til mellem 1-99, hvormed mængden af ingredienser tilpasses til det valgte antal. Det gør man ved at trykke på tal-feltet og rette til det ønskede antal og derefter trykke på done-tasten.
 
-![NoOfPeople](Images/AntalPersoner.png)
+<img src="Images/AntalPersoner.png" width="300">
 
 ### Timere
 Hvis der er angivet en eller flere timere, vil disse kunne ses under tilberedningsvejledningen.
 
 Ved klik på START-knappen startes en timer. Timerens udløb annonceres med lyd, vibration og en dialogboks. 
 
-![Timers](Images/Timere.png)
+<img src="Images/Timere.png" width="300">
 
 ### Send indkøbsliste via SMS
 For alle opskrifter med ingredienser, vil det være muligt at sende en SMS, der indeholder en liste over ingredienserne samt mængdeangivelserne, der kan bruges som indkøbsseddel. Det gøres ved at indtaste telefonnummeret (inklusiv eventuel landekode) efterfulgt af klik på SEND SMS-knap. 
 
-![SMS](Images/SMS.png)
+<img src="Images/SMS.png" width="300">
 
 Derefter åbnes SMS-applikationen, og beskeden ligger klar til afsendelse.
 
 ### Redigér opskrift
 For at redigere opskriften, klikkes på REDIGÉR-knappen i øverste højre hjørne, hvorefter detaljesiden vises i edit-mode. Edit-mode markeres ved, at baggrundsfarven er ændret til en lyserød farve. Når man opretter en ny opskrift, er det samme visning, man får.
 
-![Edit](Images/Rediger.png)
+<img src="Images/Rediger.png" width="300">
 
 Det er muligt at rette i felterne med hvid baggrund. Udgangspunktet er, at retten er sat til en ’Hovedret’, hvilket kan ændres ved at trykke på dropdown-knappen, hvorefter de forskellige muligheder præsenteres.
 
-![Spinner](Images/Spinner.png)
+<img src="Images/Spinner.png" width="300">
 
 Når alle felterne i en ingrediens-række eller timer-række er udfyldt, indsættes automatisk en ny tom række, så det hele tiden er muligt at tilføje en ingrediens eller timer.
 
