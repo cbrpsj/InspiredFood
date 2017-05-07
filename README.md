@@ -1,4 +1,3 @@
 ![alt text](https://github.com/cbrpsj/InspiredFood/Images/Logo.png)
 
-
-# InspiredFood
+![Command prompt options](Images/Logo.png)
